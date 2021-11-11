@@ -1,0 +1,151 @@
+<div class='page-header'>
+    <h1><tmpl_var name="list_head_txt"></h1>
+</div>
+<p><tmpl_var name="list_desc_txt"></p>
+
+<tmpl_if name='datalog_changes_count' op='>' value='0'>
+    <div>
+        <div class="systemmonitor-state state-info">
+            <div class="status"></div>
+            <div class="statusMsg">
+                {tmpl_var name="datalog_changes_txt"}
+                <ul>
+                    <tmpl_loop name="datalog_changes">
+                        <li><strong>{tmpl_var name="text"}:</strong> {tmpl_var name="count"}</li>
+                    </tmpl_loop>
+                </ul>
+                {tmpl_var name="datalog_changes_end_txt"}
+            </div>
+        </div><br />
+    </div>
+</tmpl_if>
+
+
+<p class="fieldset-legend">{tmpl_var name="toolsarea_head_txt"}</p>
+
+<button class="btn btn-default formbutton-success" type="button" data-load-content="ddns/ddns_token_edit.php">{tmpl_var name="add_new_token_txt"}</button>
+
+
+<p class="fieldset-legend"><tmpl_var name="list_head_txt"></p>
+<div class="table-wrapper marginTop15">
+    <table class="table">
+        <thead class="dark form-group-sm">
+        <tr>
+            <th class="tiny-col" data-column="active"><tmpl_var name="active_txt"></th>
+            <tmpl_if name='is_admin'>
+                <th data-column="sys_groupid"><tmpl_var name="sys_groupid_txt"></th>
+            </tmpl_if>
+            <th data-column="token"><tmpl_var name="token_txt"></th>
+            <th data-column="allowed_zones"><tmpl_var name="allowed_zones_txt"></th>
+            <th data-column="allowed_record_types"><tmpl_var name="allowed_record_types_txt"></th>
+            <th data-column="limit_records"><tmpl_var name="limit_records_txt"></th>
+            <th class="small-col text-right">{tmpl_var name='search_limit'}</th>
+        </tr>
+        <tr>
+            <td><select class="form-control" name="search_active">{tmpl_var name='search_active'}</select></td>
+            <tmpl_if name='is_admin'>
+                <td><select class="form-control" name="search_sys_groupid">{tmpl_var name='search_sys_groupid'}</select></td>
+            </tmpl_if>
+            <td><input class="form-control" type="text" name="search_token" value="{tmpl_var name='search_token'}" /></td>
+            <td><input class="form-control" type="text" name="search_allowed_zones" value="{tmpl_var name='search_allowed_zones'}" /></td>
+            <td><input class="form-control" type="text" name="search_allowed_record_types" value="{tmpl_var name='search_allowed_record_types'}" /></td>
+            <td><input class="form-control" type="text" name="search_limit_records" value="{tmpl_var name='search_limit_records'}" /></td>
+            <td class="text-right">
+                <button type="button" class="btn btn-default formbutton-default formbutton-narrow" name="Filter" id="Filter" value="{tmpl_var name="filter_txt"}" data-submit-form="pageForm" data-form-action="ddns/ddns_token_list.php"><span class="icon icon-filter"></span></button>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        <tmpl_loop name="records">
+            <tr>
+                <td><a href="#" data-load-content="ddns/ddns_token_edit.php?id={tmpl_var name='id'}">{tmpl_var name="active"}</td>
+                <tmpl_if name='is_admin'>
+                    <td><a href="#" data-load-content="ddns/ddns_token_edit.php?id={tmpl_var name='id'}">{tmpl_var name="sys_groupid"}</a></td>
+                </tmpl_if>
+                <td><a href="#" data-load-content="ddns/ddns_token_edit.php?id={tmpl_var name='id'}" data-toggle="tooltip" data-placement="bottom" title="{tmpl_var name='token'}">{tmpl_var name="token"}</a></td>
+                <td><a href="#" data-load-content="ddns/ddns_token_edit.php?id={tmpl_var name='id'}" data-toggle="tooltip" data-placement="bottom" title="{tmpl_var name='allowed_zones'}">{tmpl_var name="allowed_zones"}</a></td>
+                <td><a href="#" data-load-content="ddns/ddns_token_edit.php?id={tmpl_var name='id'}" data-toggle="tooltip" data-placement="bottom" title="{tmpl_var name='allowed_record_types'}">{tmpl_var name="allowed_record_types"}</a></td>
+                <td><a href="#" data-load-content="ddns/ddns_token_edit.php?id={tmpl_var name='id'}" data-toggle="tooltip" data-placement="bottom" title="{tmpl_var name='limit_records'}">{tmpl_var name="limit_records"}</a></td>
+                <td class="text-right">
+                    <a class="btn btn-default formbutton-default formbutton-narrow" data-toggle="modal" data-target="#token-urls" data-token="{tmpl_var name='token'}" data-zones="{tmpl_var name='allowed_zones'}" data-types="{tmpl_var name='allowed_record_types'}" data-records="{tmpl_var name='limit_records'}"><span class="icon icon-link"></span></a>
+                    <a class="btn btn-default formbutton-danger formbutton-narrow" href="javascript: ISPConfig.confirm_action('ddns/ddns_token_del.php?id={tmpl_var name='id'}&_csrf_id={tmpl_var name='csrf_id'}&_csrf_key={tmpl_var name='csrf_key'}&phpsessid={tmpl_var name='phpsessid'}','{tmpl_var name='delete_confirmation'}');"><span class="icon icon-delete"></span></a>
+                </td>
+            </tr>
+        </tmpl_loop>
+        <tmpl_unless name="records">
+            <tr class="tbl_row_noresults tbl_row_<tmpl_if name='__EVEN__'}even<tmpl_else>uneven</tmpl_if>">
+                <tmpl_if name='is_admin'>
+                    <td colspan="7">{tmpl_var name='globalsearch_noresults_text_txt'}</td>
+                </tmpl_if>
+                <tmpl_unless name='is_admin'>
+                    <td colspan="6">{tmpl_var name='globalsearch_noresults_text_txt'}</td>
+                </tmpl_unless>
+            </tr>
+        </tmpl_unless>
+        </tbody>
+        <tfoot>
+        <tr>
+            <tmpl_if name='is_admin'>
+                <td colspan="7"><tmpl_var name="paging"></td>
+            </tmpl_if>
+            <tmpl_unless name='is_admin'>
+                <td colspan="6"><tmpl_var name="paging"></td>
+            </tmpl_unless>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="modal fade bs-example-modal-lg" id="token-urls" tabindex="-1" role="dialog" aria-labelledby="token-urls-label">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="token-urls-label"><tmpl_var name="token_urls_title_txt"></h4>
+            </div>
+            <div style="position: relative; padding: 15px 30px;"> <!-- cannot use class modal-body, ispc would remove content -->
+                <div class="form-group">
+                    <label for="token-url-simple" class="control-label"><tmpl_var name="token_urls_simple_mode_txt"></label>
+                    <input type="text" class="form-control" id="token-url-simple" readonly="readonly">
+                </div>
+                <div class="form-group">
+                    <label for="token-url-advanced" class="control-label"><tmpl_var name="token_urls_advanced_mode_txt"></label>
+                    <input type="text" class="form-control" id="token-url-advanced" readonly="readonly">
+                    <p><tmpl_var name="ip_autodetect_info_txt"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#token-urls').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget) // Button that triggered the modal
+        // Extract info from data-* attributes
+        const token = button.data('token');
+        const zones = button.data('zones').split(',').filter(n => n);
+        const types = button.data('types').split(',').filter(n => n);
+        const records = button.data('records').split(',').filter(n => n);
+        const modal = $(this);
+        const url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/ddns/update.php';
+        if (zones.length === 1 && records.length === 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
+            const url_simple = url + '?token=' + token;
+            modal.find('input#token-url-simple').val(url_simple);
+        } else {
+            modal.find('input#token-url-simple').val('<tmpl_var name="simple_mode_unavailable_txt">');
+        }
+        if (zones.length === 0) {
+            zones.push('example.com');
+        }
+        if (records.length === 0) {
+            records.push('hostname')
+        }
+        let example_data = '<tmpl_var name="url_ip_placeholder_txt">';
+        if(types.indexOf('A') === -1 && types.indexOf('AAAA') === -1) {
+            example_data = 'XY';
+        }
+        const url_advanced = url + '?zone=' + zones[0] + '&type=' + types[0] + '&record=' + records[0] + '&data=' + example_data + '&token=' + token;
+        modal.find('input#token-url-advanced').val(url_advanced);
+    })
+</script>
