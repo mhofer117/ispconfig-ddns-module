@@ -6,6 +6,7 @@
 - [Uninstall](#uninstall)
 - [Known/Unknown Issues](#knownunknown-issues)
 
+For general questions or feedback use the [forum thread on howtoforge](https://www.howtoforge.com/community/threads/ispconfig-3-danymic-dns-ddns-module.87967/).
 
 ## Features
 - Integrated into your ISPConfig 3 DNS menu
