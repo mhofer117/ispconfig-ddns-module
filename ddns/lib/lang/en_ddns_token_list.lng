@@ -1,5 +1,6 @@
 <?php
 $wb["list_head_txt"] = 'Dynamic DNS Tokens';
+$wb["client_txt"] = 'Client';
 $wb["add_new_token_txt"] = 'Add new token';
 $wb["token_txt"] = 'Token';
 $wb["allowed_zones_txt"] = 'Allowed zones';

@@ -33,7 +33,7 @@
         <tr>
             <th class="tiny-col" data-column="active"><tmpl_var name="active_txt"></th>
             <tmpl_if name='is_admin'>
-                <th data-column="sys_groupid"><tmpl_var name="sys_groupid_txt"></th>
+                <th data-column="sys_groupid"><tmpl_var name="client_txt"></th>
             </tmpl_if>
             <th data-column="token"><tmpl_var name="token_txt"></th>
             <th data-column="allowed_zones"><tmpl_var name="allowed_zones_txt"></th>
@@ -51,7 +51,7 @@
             <td><input class="form-control" type="text" name="search_allowed_record_types" value="{tmpl_var name='search_allowed_record_types'}" /></td>
             <td><input class="form-control" type="text" name="search_limit_records" value="{tmpl_var name='search_limit_records'}" /></td>
             <td class="text-right">
-                <button type="button" class="btn btn-default formbutton-default formbutton-narrow" name="Filter" id="Filter" value="{tmpl_var name="filter_txt"}" data-submit-form="pageForm" data-form-action="ddns/ddns_token_list.php"><span class="icon icon-filter"></span></button>
+                <button type="button" class="btn btn-default formbutton-default formbutton-narrow" name="Filter" id="Filter" value="{tmpl_var name='filter_txt'}" data-submit-form="pageForm" data-form-action="ddns/ddns_token_list.php"><span class="icon icon-filter"></span></button>
             </td>
         </tr>
         </thead>
