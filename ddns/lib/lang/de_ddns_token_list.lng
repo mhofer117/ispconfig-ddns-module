@@ -1,0 +1,15 @@
+<?php
+$wb["list_head_txt"] = 'Dynamische DNS Aktualisierung';
+$wb["client_txt"] = 'Kunde';
+$wb["add_new_token_txt"] = 'Neues Token erstellen';
+$wb["token_txt"] = 'Token';
+$wb["allowed_zones_txt"] = 'Erlaubte Zonen';
+$wb["allowed_record_types_txt"] = 'Erlaubte Typen';
+$wb["limit_records_txt"] = 'Subdomain-Limit';
+$wb["active_txt"] = 'Aktiv';
+$wb["token_urls_title_txt"] = 'Token URLs für dynamische DNS Aktualisierungen';
+$wb["token_urls_simple_mode_txt"] = 'Einfacher Modus';
+$wb["token_urls_advanced_mode_txt"] = 'Erweiterter Modus';
+$wb["ip_autodetect_info_txt"] = 'IHRE_IP_ADDRESSE wird automatisch erkannt falls nicht im URL angegeben';
+$wb["simple_mode_unavailable_txt"] = 'Für den einfachen Modus muss das Token auf genau eine Zone und eine Subdomain limitiert sein';
+$wb["url_ip_placeholder_txt"] = 'IHRE_IP_ADDRESSE';
