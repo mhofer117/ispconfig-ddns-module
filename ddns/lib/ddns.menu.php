@@ -1,12 +1,9 @@
 <?php
-/** @var app $app */
-/** @var auth $auth */
-$auth = $app->auth;
 //****  Menu Definition ****
 
 // Make sure that the items array is empty
-
 $items = array();
+
 $items[] = array(
     'title' => "Tokens",
     'target' => 'content',
