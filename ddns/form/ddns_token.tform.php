@@ -2,7 +2,7 @@
 /** @var app $app */
 
 // Title of the form.
-$form['title'] = 'Dynamic DNS Tokens';
+$form['title'] = 'dynamic_dns_tokens_title_txt';
 
 // Optional description of the form.
 $form['description'] = '';
@@ -50,7 +50,7 @@ $form['auth_preset']['perm_other'] = '';
 // The form definition of the first tab. The name of the tab is called 'message'. We refer
 // to this name in the $form['tab_default'] setting above.
 $form['tabs']['token'] = array(
-    'title' => 'Dynamic DNS Token', // Title of the Tab
+    'title' => 'token_txt', // Title of the Tab
     'width' => 150,       // Tab width
     'template' => 'templates/ddns_token_edit.htm', // Template file name
     'fields' => array(
