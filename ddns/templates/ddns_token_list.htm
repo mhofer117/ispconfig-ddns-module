@@ -128,7 +128,11 @@
         const types = button.data('types').split(',').filter(n => n);
         const records = button.data('records').split(',').filter(n => n);
         const modal = $(this);
-        const url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/ddns/update.php';
+        let url = window.location.protocol + '//' + window.location.hostname;
+        if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
+            url += ':' + window.location.port;
+        }
+        url += '/ddns/update.php';
         if (zones.length === 1 && records.length === 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
             const url_simple = url + '?token=' + token;
             modal.find('input#token-url-simple').val(url_simple);
