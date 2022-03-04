@@ -1,6 +1,6 @@
 <?php
-require_once('../../lib/config.inc.php');
-require_once('../../lib/app.inc.php');
+require_once(dirname(__FILE__).'/../../lib/config.inc.php');
+require_once(dirname(__FILE__).'/../../lib/app.inc.php');
 
 /** @var app $app */
 

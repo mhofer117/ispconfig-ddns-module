@@ -1,0 +1,3 @@
+# rewrite DynDNS v1 (legacy) endpoint: https://help.dyn.com/remote-access-api/perform-update/
+RewriteEngine On
+RewriteRule ^update$ /ddns/update.php [L]
