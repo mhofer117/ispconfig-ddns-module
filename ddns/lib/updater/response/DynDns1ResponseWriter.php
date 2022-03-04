@@ -4,54 +4,68 @@ require_once(dirname(__FILE__) . '/DdnsResponseWriter.php');
 class DynDns1ResponseWriter implements DdnsResponseWriter
 {
 
+    private function dynDns1Error(string $message) {
+        echo "<TITLE>$message</TITLE>\n";
+        echo "return code: ERROR\n";
+        echo "error code: ERROR\n";
+        exit;
+    }
+
+    private function dynDns1Success(string $message) {
+        echo "<TITLE>$message</TITLE>\n";
+        echo "return code: NOERROR\n";
+        echo "error code: NOERROR\n";
+        exit;
+    }
+
     public function invalidOrMissingToken(): void
     {
-        echo "badauth";
-        exit;
+        $this->dynDns1Error("Missing or invalid token");
     }
 
     public function maintenance(): void
     {
-        // TODO: Implement maintenance() method.
+        $this->dynDns1Error("This ISPConfig installation is currently under maintenance. We should be back shortly. Thank you for your patience.");
     }
 
     public function tooManyLoginAttempts(): void
     {
-        // TODO: Implement tooManyLoginAttempts() method.
+        /** @var app $app */
+        $this->dynDns1Error($app->lng('error_user_too_many_logins'));
     }
 
     public function forbidden(string $entity): void
     {
-        // TODO: Implement forbidden() method.
+        $this->dynDns1Error("Permission denied for $entity");
     }
 
     public function missingInput(DdnsRequest $request): void
     {
-        // TODO: Implement missingInput() method.
+        $this->dynDns1Error("Missing input data, zone={$request->getZone()}, record={$request->getRecord()}, type={$request->getRecordType()}, data={$request->getData()}");
     }
 
-    public function invalidIpAddress(string $ip): void
+    public function invalidIpAddress($ip): void
     {
-        // TODO: Implement invalidIpAddress() method.
+        $this->dynDns1Error("Invalid IP address: $ip\n");
     }
 
     public function dnsNotFound(string $dns): void
     {
-        // TODO: Implement dnsNotFound() method.
+        $this->dynDns1Error("Could not find $dns");
     }
 
     public function internalError(string $message): void
     {
-        // TODO: Implement internalError() method.
+        $this->dynDns1Error($message);
     }
 
     public function noUpdateRequired(string $dnsData): void
     {
-        // TODO: Implement noUpdateRequired() method.
+        $this->dynDns1Success("$dnsData is already set");
     }
 
     public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void
     {
-        // TODO: Implement successfulUpdate() method.
+        $this->dynDns1Success("Scheduled update. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl");
     }
 }

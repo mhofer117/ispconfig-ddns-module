@@ -12,46 +12,55 @@ class DynDns2ResponseWriter implements DdnsResponseWriter
 
     public function maintenance(): void
     {
-        // TODO: Implement maintenance() method.
+        echo "maintenance"; // not a documented dyndns2 return value
+        exit;
     }
 
     public function tooManyLoginAttempts(): void
     {
-        // TODO: Implement tooManyLoginAttempts() method.
+        echo "abuse";
+        exit;
     }
 
     public function forbidden(string $entity): void
     {
-        // TODO: Implement forbidden() method.
+        echo "!yours";
+        exit;
     }
 
     public function missingInput(DdnsRequest $request): void
     {
-        // TODO: Implement missingInput() method.
+        echo "notfqdn";
+        exit;
     }
 
     public function invalidIpAddress(string $ip): void
     {
-        // TODO: Implement invalidIpAddress() method.
+        echo "notip"; // not a documented dyndns2 return value
+        exit;
     }
 
     public function dnsNotFound(string $dns): void
     {
-        // TODO: Implement dnsNotFound() method.
+        echo "nohost";
+        exit;
     }
 
     public function internalError(string $message): void
     {
-        // TODO: Implement internalError() method.
+        echo "dnserr";
+        exit;
     }
 
     public function noUpdateRequired(string $dnsData): void
     {
-        // TODO: Implement noUpdateRequired() method.
+        echo "nochg";
+        exit;
     }
 
     public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void
     {
-        // TODO: Implement successfulUpdate() method.
+        echo "good {$request->getData()}";
+        exit;
     }
 }

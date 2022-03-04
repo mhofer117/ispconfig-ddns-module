@@ -7,7 +7,7 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
     public function invalidOrMissingToken(): void
     {
         header("HTTP/1.1 401 Unauthorized");
-        echo "Missing or invalid token";
+        echo "Missing or invalid token.\n";
         exit;
     }
 
@@ -22,21 +22,21 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
     {
         header("HTTP/1.1 429 Too Many Requests");
         /** @var app $app */
-        echo $app->lng('error_user_too_many_logins');
+        echo $app->lng('error_user_too_many_logins')."\n";
         exit;
     }
 
     public function forbidden(string $entity): void
     {
         header("HTTP/1.1 403 Forbidden");
-        echo "Permission denied for $entity";
+        echo "Permission denied for $entity\n";
         exit;
     }
 
     public function missingInput(DdnsRequest $request): void
     {
         header("HTTP/1.1 400 Bad Request");
-        echo "Missing input data, zone={$request->getZone()}, record={$request->getRecord()}, type={$request->getRecordType()}, data={$request->getData()}";
+        echo "Missing input data, zone={$request->getZone()}, record={$request->getRecord()}, type={$request->getRecordType()}, data={$request->getData()}.\n";
         exit;
     }
 
@@ -50,28 +50,28 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
     public function dnsNotFound(string $dns): void
     {
         header("HTTP/1.1 404 Not Found");
-        echo "Could not find $dns";
+        echo "Could not find $dns\n";
         exit;
     }
 
     public function internalError(string $message): void
     {
         header("HTTP/1.1 500 Internal Server Error");
-        echo "$message";
+        echo "$message.\n";
         exit;
     }
 
     public function noUpdateRequired(string $dnsData): void
     {
         // return normal 200, no http error code
-        echo "ERROR: $dnsData is already set";
+        echo "ERROR: $dnsData is already set.\n";
         exit;
     }
 
     public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void
     {
         echo "Scheduled update of zone={$request->getZone()}, record={$request->getRecord()}, type={$request->getRecordType()}, data={$request->getData()}, TTL: $record_ttl\n";
-        echo "Schedule runs in $cron_eta seconds";
+        echo "Schedule runs in $cron_eta seconds.\n";
         exit;
     }
 
