@@ -43,7 +43,7 @@ class DynDnsRequest extends DdnsRequest
 
         // match records with allowed records
         $zone_length = strlen(rtrim($this->getZone(), '.'));
-        $record = substr($this->_hostname, 0, -$zone_length);
+        $record = substr($this->_hostname, 0, - $zone_length - 1);
         $this->setRecord($record);
 
         // auto-set type

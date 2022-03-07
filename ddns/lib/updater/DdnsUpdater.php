@@ -15,14 +15,18 @@ class DdnsUpdater
     public function __construct(app $ispconfig)
     {
         $this->_ispconfig = $ispconfig;
-        switch ($_SERVER['REQUEST_URI']) {
-            case '/nic/update':
+        $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        switch ($request_uri) {
+            case '/nic/dyndns':
+            case '/nic/statdns':
+                # DynDns 1 endpoints
                 require_once(dirname(__FILE__) . '/request/DynDnsRequest.php');
                 require_once(dirname(__FILE__) . '/response/DynDns1ResponseWriter.php');
                 $this->_response_writer = new DynDns1ResponseWriter($ispconfig);
                 $this->_requests[] = new DynDnsRequest($_GET['host_id']);
                 break;
-            case '/v3/update':
+            case '/nic/update':
+                # DynDns 2 endpoint
                 require_once(dirname(__FILE__) . '/request/DynDnsRequest.php');
                 require_once(dirname(__FILE__) . '/response/DynDns2ResponseWriter.php');
                 $this->_response_writer = new DynDns2ResponseWriter();

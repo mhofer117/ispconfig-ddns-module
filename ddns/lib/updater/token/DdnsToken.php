@@ -11,7 +11,7 @@ class DdnsToken
     /** @var string[] $_limit_records */
     protected $_limit_records;
 
-    function __construct(app $ispconfig, string $requestToken, DdnsResponseWriter $response_writer)
+    function __construct(app $ispconfig, ?string $requestToken, DdnsResponseWriter $response_writer)
     {
         $this->_ispconfig = $ispconfig;
         if ($requestToken == null) {

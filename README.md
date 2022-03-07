@@ -37,10 +37,9 @@ chown -h ispconfig:ispconfig /usr/local/ispconfig/interface/lib/classes/ddns_cus
 mkdir -p /usr/local/ispconfig/interface/web/dns/lib/menu.d
 ln -s -f /usr/local/ispconfig/interface/web/ddns/lib/ddns.menu.php /usr/local/ispconfig/interface/web/dns/lib/menu.d/
 chown -h ispconfig:ispconfig /usr/local/ispconfig/interface/web/dns/lib/menu.d/ddns.menu.php
-# link directories to support dyndns v1/v2 protocol endpoints
-ln -s -f /usr/local/ispconfig/interface/web/ddns/v3 /usr/local/ispconfig/interface/web/
+# link nic directory to support dyndns v1/v2 protocol endpoints
 ln -s -f /usr/local/ispconfig/interface/web/ddns/nic /usr/local/ispconfig/interface/web/
-chown -h ispconfig:ispconfig /usr/local/ispconfig/interface/web/v3 /usr/local/ispconfig/interface/web/nic
+chown -h ispconfig:ispconfig /usr/local/ispconfig/interface/web/nic
 ````
 
 ## Uninstall
@@ -51,7 +50,6 @@ rm -f /usr/local/ispconfig/interface/lib/classes/ddns_custom_datasource.inc.php
 rm -f /usr/local/ispconfig/interface/web/dns/lib/menu.d/ddns.menu.php
 rmdir /usr/local/ispconfig/interface/web/dns/lib/menu.d
 rm -rf /usr/local/ispconfig/interface/web/ddns
-rm -rf /usr/local/ispconfig/interface/web/v3
 rm -rf /usr/local/ispconfig/interface/web/nic
 ````
 
