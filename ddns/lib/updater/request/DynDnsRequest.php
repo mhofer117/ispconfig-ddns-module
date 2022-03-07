@@ -1,22 +1,16 @@
 <?php
 require_once(dirname(__FILE__) . '/DdnsRequest.php');
 
-class DynDns2Request extends DdnsRequest
+class DynDnsRequest extends DdnsRequest
 {
+    /** @var string $_hostname */
     protected $_hostname;
 
-    function __construct()
+    function __construct($hostname)
     {
-        $this->setToken($this->getTokenFromRequest());
-        $this->_hostname = $_GET['hostname']; // TODO: this can be multiple
+        $this->_hostname = $hostname;
         $this->setData($_GET['myip']);
         // zone, record and type cannot be determined from http request only
-    }
-
-    protected function getTokenFromRequest(): ?string
-    {
-        // only hex characters allowed in token
-        return preg_replace("/[^0-9^a-f]/", "", $_SERVER['PHP_AUTH_PW']);
     }
 
     public function autoSetMissingInput(DdnsToken $token): void

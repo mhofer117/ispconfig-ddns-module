@@ -3,8 +3,6 @@
 abstract class DdnsRequest
 {
 
-    /** @var string $_token */
-    protected $_token;
     /** @var string $_zone */
     protected $_zone;
     /** @var string $_record */
@@ -13,16 +11,6 @@ abstract class DdnsRequest
     protected $_record_type;
     /** @var string $_data */
     protected $_data;
-
-    public function setToken($token): void
-    {
-        $this->_token = $token;
-    }
-
-    public function getToken(): ?string
-    {
-        return $this->_token;
-    }
 
     public function setZone($zone): void
     {

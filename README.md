@@ -57,4 +57,8 @@ rm -rf /usr/local/ispconfig/interface/web/nic
 
 ## Known/Unknown Issues
 - Paging does not work correctly, show all records on the same page to work around this
-- May not work correctly in a multi-server setup or with the domain module (feedback is welcome)
+- The following clients require ISPConfig on a default port (443 or 80):
+  - DynDns1 and DynDns2 protocols with [ddclient](https://github.com/ddclient/ddclient)
+  - FRITZ!Box (tm) (may support :8080 and other ports in a future update)
+  - maybe others
+- May not work correctly or require extra steps in a multi-server setup (feedback is welcome)

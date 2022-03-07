@@ -5,24 +5,10 @@ class DefaultDdnsRequest extends DdnsRequest
 {
     function __construct()
     {
-        $this->setToken($this->getTokenFromRequest());
         $this->setZone($_GET['zone']);
         $this->setRecord($_GET['record']);
         $this->setRecordType($_GET['type']);
         $this->setData($_GET['data']);
-    }
-
-    protected function getTokenFromRequest(): ?string
-    {
-        if (isset($_GET['token'])) {
-            $token = $_GET['token'];
-        } else if (isset($_SERVER['PHP_AUTH_PW'])) {
-            $token = $_SERVER['PHP_AUTH_PW'];
-        } else {
-            return null;
-        }
-        // only hex characters allowed in token
-        return preg_replace("/[^0-9^a-f]/", "", $token);
     }
 
     public function autoSetMissingInput(DdnsToken $token): void
