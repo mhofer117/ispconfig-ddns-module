@@ -2,6 +2,8 @@
 
 class DdnsToken
 {
+    /** @var app $_ispconfig */
+    protected $_ispconfig;
     /** @var string[] $_allowed_zones */
     protected $_allowed_zones;
     /** @var string[] $_allowed_record_types */
@@ -9,33 +11,33 @@ class DdnsToken
     /** @var string[] $_limit_records */
     protected $_limit_records;
 
-    function __construct(string $requestToken, DdnsResponseWriter $response_writer)
+    function __construct(app $ispconfig, string $requestToken, DdnsResponseWriter $response_writer)
     {
+        $this->_ispconfig = $ispconfig;
         if ($requestToken == null) {
             $response_writer->invalidOrMissingToken();
             exit;
         }
 
-        /** @var app $app */
         //* Check if there are already wrong logins
         $request_ip = md5($_SERVER['REMOTE_ADDR']);
         $sql = "SELECT * FROM `attempts_login` WHERE `ip`= ? AND  `login_time` > (NOW() - INTERVAL 1 MINUTE) LIMIT 1";
-        $alreadyfailed = $app->db->queryOneRecord($sql, $request_ip);
+        $alreadyfailed = $this->_ispconfig->db->queryOneRecord($sql, $request_ip);
         if ($alreadyfailed['times'] > 5) {
             $response_writer->tooManyLoginAttempts();
             exit;
         }
 
-        $token = $app->db->queryOneRecord("SELECT * FROM ddns_token WHERE active = 'Y' AND token=?", $requestToken);
+        $token = $this->_ispconfig->db->queryOneRecord("SELECT * FROM ddns_token WHERE active = 'Y' AND token=?", $requestToken);
         if ($token == null) {
             if (!$alreadyfailed['times']) {
                 //* user login the first time wrong
                 $sql = "INSERT INTO `attempts_login` (`ip`, `times`, `login_time`) VALUES (?, 1, NOW())";
-                $app->db->query($sql, $request_ip);
+                $this->_ispconfig->db->query($sql, $request_ip);
             } elseif ($alreadyfailed['times'] >= 1) {
                 //* update times wrong
                 $sql = "UPDATE `attempts_login` SET `times`=`times`+1, `login_time`=NOW() WHERE `ip` = ? AND `login_time` < NOW() ORDER BY `login_time` DESC LIMIT 1";
-                $app->db->query($sql, $request_ip);
+                $this->_ispconfig->db->query($sql, $request_ip);
             }
 
             $response_writer->invalidOrMissingToken();
@@ -43,7 +45,7 @@ class DdnsToken
         } else {
             // User login right, so attempts can be deleted
             $sql = "DELETE FROM `attempts_login` WHERE `ip`=?";
-            $app->db->query($sql, $request_ip);
+            $this->_ispconfig->db->query($sql, $request_ip);
         }
         $this->_allowed_zones = array_filter(explode(',', $token['allowed_zones']));
         $this->_allowed_record_types = array_filter(explode(',', $token['allowed_record_types']));

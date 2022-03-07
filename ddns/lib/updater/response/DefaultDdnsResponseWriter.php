@@ -3,6 +3,13 @@ require_once(dirname(__FILE__) . '/DdnsResponseWriter.php');
 
 class DefaultDdnsResponseWriter implements DdnsResponseWriter
 {
+    /** @var app $_ispconfig */
+    protected $_ispconfig;
+
+    public function __construct(app $ispconfig)
+    {
+        $this->_ispconfig = $ispconfig;
+    }
 
     public function invalidOrMissingToken(): void
     {
@@ -21,8 +28,7 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
     public function tooManyLoginAttempts(): void
     {
         header("HTTP/1.1 429 Too Many Requests");
-        /** @var app $app */
-        echo $app->lng('error_user_too_many_logins')."\n";
+        echo $this->_ispconfig->lng('error_user_too_many_logins')."\n";
         exit;
     }
 

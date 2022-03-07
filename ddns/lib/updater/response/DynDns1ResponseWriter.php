@@ -3,6 +3,13 @@ require_once(dirname(__FILE__) . '/DdnsResponseWriter.php');
 
 class DynDns1ResponseWriter implements DdnsResponseWriter
 {
+    /** @var app $_ispconfig */
+    protected $_ispconfig;
+
+    public function __construct(app $ispconfig)
+    {
+        $this->_ispconfig = $ispconfig;
+    }
 
     private function dynDns1Error(string $message) {
         echo "<TITLE>$message</TITLE>\n";
@@ -30,8 +37,7 @@ class DynDns1ResponseWriter implements DdnsResponseWriter
 
     public function tooManyLoginAttempts(): void
     {
-        /** @var app $app */
-        $this->dynDns1Error($app->lng('error_user_too_many_logins'));
+        $this->dynDns1Error($this->_ispconfig->lng('error_user_too_many_logins'));
     }
 
     public function forbidden(string $entity): void
