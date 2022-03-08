@@ -19,7 +19,8 @@ For general questions or feedback use the [forum thread on howtoforge](https://w
 ## Screenshots
 ![Overview page screenshot](https://user-images.githubusercontent.com/3976393/141506890-7c235b39-6ad9-4519-a482-4f2e8d44740c.png)
 ![Edit/New token page screenshot](https://user-images.githubusercontent.com/3976393/141506913-5b56f809-f255-49f8-b7da-fc2dd080c3ff.png)
-![Update URLs modal screenshot](https://user-images.githubusercontent.com/3976393/141506922-36a59235-7344-475b-a0ec-77323084f5e5.png)
+![Update URLs modal screenshot](https://user-images.githubusercontent.com/3976393/157296785-6a3c4e00-24b0-431f-91b0-62fc6f32d330.png)
+
 
 
 ## Installation
