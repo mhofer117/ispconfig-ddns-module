@@ -24,11 +24,11 @@ For general questions or feedback use the [forum thread on howtoforge](https://w
 
 ## Installation
 - Create the database table using [`setup.sql`](setup.sql) inside of your existing ispconfig database, usually called "dbispconfig"
-- Checkout the repository or download a release on your server
-- Install the module files as follows:
+- Checkout the repository or download and extract a release on your server
+- Move the directory to the correct location: `mv ispconfig-ddns-module /usr/local/ispconfig/interface/web/ddns`
+- Set permissions and create symlinks as follows:
 ````
 # install module
-cp -R ddns /usr/local/ispconfig/interface/web/
 chown -R ispconfig:ispconfig /usr/local/ispconfig/interface/web/ddns
 # setup dependency class
 ln -s -f /usr/local/ispconfig/interface/web/ddns/lib/classes/ddns_custom_datasource.inc.php /usr/local/ispconfig/interface/lib/classes/
