@@ -58,9 +58,9 @@ class DynDns2ResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void
+    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void
     {
-        echo "good {$request->getData()}";
+        echo "good $data";
         exit;
     }
 }

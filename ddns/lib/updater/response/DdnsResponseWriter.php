@@ -20,5 +20,5 @@ interface DdnsResponseWriter
 
     public function noUpdateRequired(string $dnsData): void;
 
-    public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void;
+    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void;
 }

@@ -74,10 +74,9 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void
+    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void
     {
-        echo "Scheduled update of zone={$request->getZone()}, record={$request->getRecord()}, type={$request->getRecordType()}, data={$request->getData()}, TTL: $record_ttl\n";
-        echo "Schedule runs in $cron_eta seconds.\n";
+        echo "Scheduled update to $$data. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl.\n";
         exit;
     }
 

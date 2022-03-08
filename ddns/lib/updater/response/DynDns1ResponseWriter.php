@@ -70,8 +70,8 @@ class DynDns1ResponseWriter implements DdnsResponseWriter
         $this->dynDns1Success("$dnsData is already set");
     }
 
-    public function successfulUpdate(DdnsRequest $request, $record_ttl, $cron_eta): void
+    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void
     {
-        $this->dynDns1Success("Scheduled update. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl");
+        $this->dynDns1Success("Scheduled update to $$data. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl");
     }
 }

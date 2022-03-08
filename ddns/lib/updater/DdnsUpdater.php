@@ -67,14 +67,16 @@ class DdnsUpdater
 
     public function process(): void
     {
+        $records = [];
         foreach ($this->_requests as $request) {
             $request->autoSetMissingInput($this->_token);
             $request->validate($this->_token, $this->_response_writer);
-            $this->updateDnsRecords($request);
+            $records[] = $this->loadDnsRecord($request);
         }
+        $this->updateDnsRecords($records);
     }
 
-    protected function updateDnsRecords(DdnsRequest $request): void
+    protected function loadDnsRecord(DdnsRequest $request): array
     {
         // try to load zone
         $soa = $this->_ispconfig->db->queryOneRecord("SELECT id,origin,serial FROM dns_soa WHERE origin=?", $request->getZone());
@@ -99,28 +101,61 @@ class DdnsUpdater
             exit;
         }
 
-        // check if update is required
-        if ($rr['data'] == $request->getData()) {
-            $this->_response_writer->noUpdateRequired($request->getData());
+        return [
+            'requestData' => $request->getData(),
+            'soa' => $soa,
+            'rr' => $rr
+        ];
+    }
+
+    protected function updateDnsRecords(array $records): void
+    {
+        $update_performed = false;
+        $unique_soa = [];
+        $longest_ttl = 0;
+        // update DNS records
+        foreach ($records as $record) {
+            $requestData = $record['requestData'];
+            $soa = $record['soa'];
+            $rr = $record['rr'];
+            // check if update is required
+            if ($rr['data'] == $requestData) {
+                continue;
+            }
+
+            // Update the RR record
+            $rr_update = array(
+                "data" => $requestData,
+                "serial" => $this->_ispconfig->validate_dns->increase_serial($rr["serial"]),
+                "stamp" => date('Y-m-d H:i:s')
+            );
+            $this->_ispconfig->db->datalogUpdate('dns_rr', $rr_update, 'id', $rr['id']);
+            $update_performed = true;
+
+            if (!array_key_exists($soa['id'], $unique_soa)) {
+                $unique_soa[$soa['id']] = $soa;
+            }
+            if ($longest_ttl < (int) $rr['ttl']) {
+                $longest_ttl = (int) $rr['ttl'];
+            }
+        }
+
+        if (!$update_performed) {
+            $this->_response_writer->noUpdateRequired($records[0]['requestData']);
             exit;
         }
 
-        //* Update the RR record
-        $rr_update = array(
-            "data" => $request->getData(),
-            "serial" => $this->_ispconfig->validate_dns->increase_serial($rr["serial"]),
-            "stamp" => date('Y-m-d H:i:s')
-        );
-        $this->_ispconfig->db->datalogUpdate('dns_rr', $rr_update, 'id', $rr['id']);
+        // Update the serial number of the affected SOA records
+        foreach ($unique_soa as $soa) {
+            //* Update the serial number of the SOA record
+            $soa_update = array(
+                "serial" => $this->_ispconfig->validate_dns->increase_serial($soa["serial"])
+            );
+            $this->_ispconfig->db->datalogUpdate('dns_soa', $soa_update, 'id', $soa['id']);
 
-        //* Update the serial number of the SOA record
-        $soa_update = array(
-            "serial" => $this->_ispconfig->validate_dns->increase_serial($soa["serial"])
-        );
-        $this->_ispconfig->db->datalogUpdate('dns_soa', $soa_update, 'id', $soa['id']);
-
-        // cron runs every full minute, calculate seconds left
-        $cron_eta = 60 - date('s');
-        $this->_response_writer->successfulUpdate($request, $rr['ttl'], $cron_eta);
+            // cron runs every full minute, calculate seconds left
+            $cron_eta = 60 - date('s');
+            $this->_response_writer->successfulUpdate($records[0]['requestData'], $longest_ttl, $cron_eta);
+        }
     }
 }
