@@ -100,21 +100,150 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="token-urls-label"><tmpl_var name="token_urls_title_txt"></h4>
+                <h3 class="modal-title" id="token-urls-label"><tmpl_var name="token_urls_title_txt"></h3>
             </div>
             <div style="position: relative; padding: 15px 30px;"> <!-- cannot use class modal-body, ispc would remove content -->
+                <h4><tmpl_var name="token_urls_simple_mode_txt"></h4>
                 <div class="form-group">
-                    <label for="token-url-simple" class="control-label"><tmpl_var name="token_urls_simple_mode_txt"></label>
-                    <input type="text" class="form-control" id="token-url-simple" readonly="readonly">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="token-url-simple" readonly="readonly">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#token-url-simple')" onmouseout="$(this).tooltip('destroy')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i>
+                            </button>
+                        </span>
+                    </div>
                 </div>
+
+                <hr/>
+
+                <h4><tmpl_var name="token_urls_advanced_mode_txt"></h4>
                 <div class="form-group">
-                    <label for="token-url-advanced" class="control-label"><tmpl_var name="token_urls_advanced_mode_txt"></label>
-                    <input type="text" class="form-control" id="token-url-advanced" readonly="readonly">
-                    <p><tmpl_var name="ip_autodetect_info_txt"></p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="token-url-advanced" readonly="readonly">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#token-url-advanced')" onmouseout="$(this).tooltip('destroy')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <strong><tmpl_var name="authentication_txt">:</strong>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="token-auth-user" class="col-sm-2 control-label"><tmpl_var name="username_txt"></label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="token-auth-user" readonly="readonly" value="none">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#token-auth-user')" onmouseout="$(this).tooltip('destroy')">
+                                        <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="token-auth-pass" class="col-sm-2 control-label"><tmpl_var name="password_txt"></label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="token-auth-pass" readonly="readonly" value="none">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#token-auth-pass')" onmouseout="$(this).tooltip('destroy')">
+                                        <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <strong><tmpl_var name="url_parameter_description_txt">:</strong>
+                <dl class="dl-horizontal">
+                    <dt>zone</dt>
+                    <dd><span id="zone-optional"><tmpl_var name="optional_txt"> </span><tmpl_var name="url_parameter_zone_txt"></dd>
+                    <dt>record</dt>
+                    <dd><span id="record-optional"><tmpl_var name="optional_txt"> </span><tmpl_var name="url_parameter_record_txt"></dd>
+                    <dt>type</dt>
+                    <dd><span id="type-optional"><tmpl_var name="optional_txt"> </span><tmpl_var name="url_parameter_type_txt"></dd>
+                    <dt>data</dt>
+                    <dd><tmpl_var name="optional_txt"> <tmpl_var name="url_parameter_data_txt"></dd>
+                    <dt>token</dt>
+                    <dd><tmpl_var name="optional_txt"> <tmpl_var name="url_parameter_token_txt"></dd>
+                </dl>
+
+                <hr/>
+
+                <div id="dyndns-mode">
+                    <h4><tmpl_var name="dyndns_protocol_txt"></h4>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="dyndns-url" readonly="readonly">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#dyndns-url')" onmouseout="$(this).tooltip('destroy')">
+                                    <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <strong><tmpl_var name="dyndns_configuration_txt">:</strong>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="token-auth-user" class="col-sm-2 control-label"><tmpl_var name="server_txt"></label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="dyndns-server" readonly="readonly">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#dyndns-server')" onmouseout="$(this).tooltip('destroy')">
+                                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="token-auth-user" class="col-sm-2 control-label"><tmpl_var name="username_txt"></label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="dyndns-auth-user" readonly="readonly" value="none">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#dyndns-auth-user')" onmouseout="$(this).tooltip('destroy')">
+                                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="token-auth-pass" class="col-sm-2 control-label"><tmpl_var name="password_txt"></label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="dyndns-auth-pass" readonly="readonly" value="none">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#dyndns-auth-pass')" onmouseout="$(this).tooltip('destroy')">
+                                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="token-auth-pass" class="col-sm-2 control-label"><tmpl_var name="hostname_txt"></label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="dyndns-hostname" readonly="readonly" value="none">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="copyToClipboard(this, '#dyndns-hostname')" onmouseout="$(this).tooltip('destroy')">
+                                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><tmpl_var name="btn_close_txt"></button>
             </div>
         </div>
     </div>
@@ -128,11 +257,11 @@
         const types = button.data('types').split(',').filter(n => n);
         const records = button.data('records').split(',').filter(n => n);
         const modal = $(this);
-        let url = window.location.protocol + '//' + window.location.hostname;
+        let base_url = window.location.protocol + '//' + window.location.hostname;
         if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
-            url += ':' + window.location.port;
+            base_url += ':' + window.location.port;
         }
-        url += '/ddns/update.php';
+        let url = base_url + '/ddns/update.php';
         if (zones.length === 1 && records.length === 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
             const url_simple = url + '?token=' + token;
             modal.find('input#token-url-simple').val(url_simple);
@@ -149,7 +278,44 @@
         if(types.indexOf('A') === -1 && types.indexOf('AAAA') === -1) {
             example_data = 'XY';
         }
-        const url_advanced = url + '?zone=' + zones[0] + '&type=' + types[0] + '&record=' + records[0] + '&data=' + example_data + '&token=' + token;
+        const url_advanced = base_url + '?zone=' + zones[0] + '&type=' + types[0] + '&record=' + records[0] + '&data=' + example_data + '&token=' + token;
+        // set standard url parameters
         modal.find('input#token-url-advanced').val(url_advanced);
+        modal.find('input#token-auth-pass').val(token);
+        if (zones.length === 1) {
+            modal.find('span#zone-optional').show();
+        } else {
+            modal.find('span#zone-optional').hide();
+        }
+        if (records.length === 1) {
+            modal.find('span#record-optional').show();
+        } else {
+            modal.find('span#record-optional').hide();
+        }
+        if (types.length) {
+            modal.find('span#type-optional').show();
+        } else {
+            modal.find('span#type-optional').hide();
+        }
+        // set dyndns parameters
+        if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
+            // hide dyndns mode on non-default ports
+            modal.find('div#dyndns-mode').hide();
+        } else {
+            modal.find('div#dyndns-mode').show();
+            const hostname = records[0] + '.' + zones[0].slice(0, -1);
+            const url_dyndns = base_url + '/nic/update?hostname=' + hostname + '&myip=' + example_data;
+            modal.find('input#dyndns-url').val(url_dyndns);
+            modal.find('input#dyndns-server').val(window.location.hostname);
+            modal.find('input#dyndns-auth-pass').val(token);
+            modal.find('input#dyndns-hostname').val(hostname);
+        }
     })
+    function copyToClipboard(button, input) {
+        let copied_txt = '<tmpl_var name="copied_txt">';
+        navigator.clipboard.writeText($(input).val()).then(function () {
+            $(button).tooltip({'placement': 'bottom', 'title': copied_txt, 'trigger': 'manual'});
+            $(button).tooltip('show');
+        });
+    }
 </script>

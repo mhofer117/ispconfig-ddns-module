@@ -42,6 +42,10 @@ ln -s -f /usr/local/ispconfig/interface/web/ddns/nic /usr/local/ispconfig/interf
 chown -h ispconfig:ispconfig /usr/local/ispconfig/interface/web/nic
 ````
 
+## Update
+If you pulled the module to your server with git, use `git pull`, otherwise download the latest release and override all existing files.
+After that, re-run the commands from the installation steps to fix permissions / symlinks.
+
 ## Uninstall
 - Remove module database table ``DROP TABLE IF EXISTS `ddns_token`;``
 - Delete all module files and related symlinks
@@ -56,7 +60,7 @@ rm -rf /usr/local/ispconfig/interface/web/nic
 ## Known/Unknown Issues
 - Paging does not work correctly, show all records on the same page to work around this
 - The following clients require ISPConfig on a default port (443 or 80):
-  - DynDns1 and DynDns2 protocols with [ddclient](https://github.com/ddclient/ddclient)
+  - DynDns1 and DynDns2 protocols, for example with [ddclient](https://github.com/ddclient/ddclient)
   - FRITZ!Box (tm) (may support :8080 and other ports in a future update)
   - maybe others
 - May not work correctly or require extra steps in a multi-server setup (feedback is welcome)
