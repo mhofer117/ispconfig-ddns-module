@@ -155,7 +155,7 @@ class DdnsUpdater
 
             // cron runs every full minute, calculate seconds left
             $cron_eta = 60 - date('s');
-            $this->_response_writer->successfulUpdate($records[0]['requestData'], $longest_ttl, $cron_eta);
         }
+        $this->_response_writer->successfulUpdate($records[0]['requestData'], $longest_ttl, $cron_eta);
     }
 }
