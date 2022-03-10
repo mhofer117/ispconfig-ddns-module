@@ -12,7 +12,7 @@ class DdnsUpdater
     /** @var DdnsResponseWriter $_response_writer */
     protected $_response_writer;
 
-    public function __construct(app $ispconfig)
+    public function __construct(app $ispconfig, array $config)
     {
         $this->_ispconfig = $ispconfig;
         $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -49,7 +49,32 @@ class DdnsUpdater
             $this->_response_writer->maintenance();
             exit;
         }
-        $this->_token = new DdnsToken($ispconfig, $this->getTokenFromRequest(), $this->_response_writer);
+        $this->_token = new DdnsToken($ispconfig, $this->getRequestIp($config), $this->getTokenFromRequest(), $this->_response_writer);
+    }
+
+    public function getRequestIp($config): string
+    {
+        $remote_ip = $_SERVER['REMOTE_ADDR'];
+        if (!isset($_SERVER["HTTP_{$config['PROXY_KEY_HEADER']}"]) || !isset($_SERVER["HTTP_{$config['PROXY_IP_HEADER']}"])) {
+            return $remote_ip;
+        }
+        if ($remote_ip !== $config['TRUSTED_PROXY_IP']) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo "Untrusted proxy: '$remote_ip' does not match config TRUSTED_PROXY_IP.\n";
+            exit;
+        }
+        if (empty($config['TRUSTED_PROXY_KEY']) || $_SERVER["HTTP_{$config['PROXY_KEY_HEADER']}"] !== $config['TRUSTED_PROXY_KEY']) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo "Proxy key is invalid.\n";
+            exit;
+        }
+        $forwarded_ip = $_SERVER["HTTP_{$config['PROXY_IP_HEADER']}"];
+        if (filter_var($forwarded_ip, FILTER_VALIDATE_IP) === false) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo "The proxy has forwarded an invalid IP: '$forwarded_ip'.\n";
+            exit;
+        }
+        return $forwarded_ip;
     }
 
     protected function getTokenFromRequest(): ?string
@@ -135,8 +160,8 @@ class DdnsUpdater
             if (!array_key_exists($soa['id'], $unique_soa)) {
                 $unique_soa[$soa['id']] = $soa;
             }
-            if ($longest_ttl < (int) $rr['ttl']) {
-                $longest_ttl = (int) $rr['ttl'];
+            if ($longest_ttl < (int)$rr['ttl']) {
+                $longest_ttl = (int)$rr['ttl'];
             }
         }
 

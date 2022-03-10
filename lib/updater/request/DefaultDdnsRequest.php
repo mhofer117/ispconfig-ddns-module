@@ -11,7 +11,7 @@ class DefaultDdnsRequest extends DdnsRequest
         $this->setData($_GET['data']);
     }
 
-    public function autoSetMissingInput(DdnsToken $token): void
+    public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
     {
         // auto-set zone if possible
         if ($this->getZone() == null && count($token->getAllowedZones()) == 1) {
@@ -24,7 +24,7 @@ class DefaultDdnsRequest extends DdnsRequest
 
         // auto-set data if possible
         if ($this->getData() == null && ($this->getRecordType() == null || $this->getRecordType() == 'A' || $this->getRecordType() == 'AAAA')) {
-            $this->setData($_SERVER['REMOTE_ADDR']);
+            $this->setData($remote_ip);
         }
 
         // auto-set type if possible

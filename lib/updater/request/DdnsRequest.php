@@ -52,7 +52,7 @@ abstract class DdnsRequest
         return $this->_data;
     }
 
-    abstract public function autoSetMissingInput(DdnsToken $token): void;
+    abstract public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void;
 
     public function validate(DdnsToken $token, DdnsResponseWriter $response_writer): void
     {

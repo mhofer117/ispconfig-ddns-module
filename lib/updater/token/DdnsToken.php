@@ -11,7 +11,7 @@ class DdnsToken
     /** @var string[] $_limit_records */
     protected $_limit_records;
 
-    function __construct(app $ispconfig, ?string $requestToken, DdnsResponseWriter $response_writer)
+    function __construct(app $ispconfig, string $remote_ip, ?string $requestToken, DdnsResponseWriter $response_writer)
     {
         $this->_ispconfig = $ispconfig;
         if ($requestToken == null) {
@@ -20,7 +20,7 @@ class DdnsToken
         }
 
         //* Check if there are already wrong logins
-        $request_ip = md5($_SERVER['REMOTE_ADDR']);
+        $request_ip = md5($remote_ip);
         $sql = "SELECT * FROM `attempts_login` WHERE `ip`= ? AND  `login_time` > (NOW() - INTERVAL 1 MINUTE) LIMIT 1";
         $alreadyfailed = $this->_ispconfig->db->queryOneRecord($sql, $request_ip);
         if ($alreadyfailed['times'] > 5) {
