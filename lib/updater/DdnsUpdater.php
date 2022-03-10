@@ -5,6 +5,8 @@ class DdnsUpdater
 {
     /** @var app $_ispconfig */
     protected $_ispconfig;
+    /** @var string $_remote_ip */
+    protected $_remote_ip;
     /** @var DdnsToken $_token */
     protected $_token;
     /** @var DdnsRequest[] $_requests */
@@ -16,6 +18,7 @@ class DdnsUpdater
     {
         $this->_ispconfig = $ispconfig;
         $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $this->_remote_ip = $this->getRequestIp($config);
         switch ($request_uri) {
             case '/nic/dyndns':
             case '/nic/statdns':
@@ -49,7 +52,7 @@ class DdnsUpdater
             $this->_response_writer->maintenance();
             exit;
         }
-        $this->_token = new DdnsToken($ispconfig, $this->getRequestIp($config), $this->getTokenFromRequest(), $this->_response_writer);
+        $this->_token = new DdnsToken($ispconfig, $this->_remote_ip, $this->getTokenFromRequest(), $this->_response_writer);
     }
 
     public function getRequestIp($config): string
@@ -94,7 +97,7 @@ class DdnsUpdater
     {
         $records = [];
         foreach ($this->_requests as $request) {
-            $request->autoSetMissingInput($this->_token);
+            $request->autoSetMissingInput($this->_token, $this->_remote_ip);
             $request->validate($this->_token, $this->_response_writer);
             $records[] = $this->loadDnsRecord($request);
         }

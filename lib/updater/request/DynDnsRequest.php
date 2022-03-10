@@ -13,7 +13,7 @@ class DynDnsRequest extends DdnsRequest
         // zone, record and type cannot be determined from http request only
     }
 
-    public function autoSetMissingInput(DdnsToken $token): void
+    public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
     {
         if ($this->_hostname == null) {
             return;
