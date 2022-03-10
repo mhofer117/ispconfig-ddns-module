@@ -15,7 +15,7 @@ class DynDnsRequest extends DdnsRequest
 
     public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
     {
-        if ($this->_hostname == null) {
+        if ($this->_hostname === null) {
             return;
         }
         $this->_hostname = rtrim($this->_hostname, '.');
@@ -29,7 +29,7 @@ class DynDnsRequest extends DdnsRequest
         }
         if (empty($matching_zones)) {
             return;
-        } else if (sizeof($matching_zones) == 1) {
+        } else if (sizeof($matching_zones) === 1) {
             $this->setZone($matching_zones[0]);
         } else {
             $closest_match = '';
@@ -43,25 +43,29 @@ class DynDnsRequest extends DdnsRequest
 
         // match records with allowed records
         $zone_length = strlen(rtrim($this->getZone(), '.'));
-        $record = substr($this->_hostname, 0, - $zone_length - 1);
-        $this->setRecord($record);
+        if ($zone_length > strlen($this->_hostname)) {
+            $record = substr($this->_hostname, 0, - $zone_length - 1);
+            $this->setRecord($record);
+        } else if (count($token->getLimitRecords()) == 0) {
+            $this->setRecord('');
+        }
 
         // auto-set type
-        if ($this->getData() != null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        if ($this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $this->setRecordType('A');
-        } else if ($this->getData() != null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        } else if ($this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $this->setRecordType('AAAA');
         }
     }
 
     public function validate(DdnsToken $token, DdnsResponseWriter $response_writer): void
     {
-        if ($this->_hostname == null) {
+        if ($this->_hostname === null) {
             $response_writer->missingInput($this);
             exit;
         }
         // check if all required data is available
-        if ($this->getZone() == null || $this->getRecord() == null) {
+        if ($this->getZone() === null || $this->getRecord() === null) {
             $response_writer->dnsNotFound($this->_hostname);
             exit;
         } else if ($this->getRecordType() == null) {
