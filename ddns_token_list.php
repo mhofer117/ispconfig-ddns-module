@@ -29,7 +29,7 @@ if (file_exists(dirname(__FILE__) . '/update.config.local.php')) {
 } else {
     $config = $default_config;
 }
-$app->tpl->setVar('PROXY_HOST', $default_config['PROXY_HOST']);
+$app->tpl->setVar('PROXY_HOST', $config['PROXY_HOST']);
 
 // $app->listform_actions->SQLExtWhere = "dns_soa.access = 'REJECT'";
 // $app->listform_actions->SQLOrderBy = 'ORDER BY dns_soa.origin';
