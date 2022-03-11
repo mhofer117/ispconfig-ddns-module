@@ -259,11 +259,13 @@
         const modal = $(this);
         const proxy_host = '<tmpl_var name="PROXY_HOST">'.trim();
         let base_url = window.location.protocol + '//' + window.location.hostname;
+        let custom_port = false;
         if (proxy_host !== '') {
             base_url = 'https://' + proxy_host
         } else {
             if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
                 base_url += ':' + window.location.port;
+                custom_port = true;
             }
         }
         let url = base_url + '/ddns/update.php';
@@ -303,7 +305,7 @@
             modal.find('span#type-optional').hide();
         }
         // set dyndns parameters
-        if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
+        if (custom_port) {
             // hide dyndns mode on non-default ports
             modal.find('div#dyndns-mode').hide();
         } else {
