@@ -12,6 +12,7 @@ For general questions or feedback use the [forum thread on howtoforge](https://w
 - Integrated into your ISPConfig 3 DNS menu
 - Allows clients, resellers and admins to create ddns tokens
 - Updates can be performed with simple GET requests using these tokens
+- Updates can be performed using DynDns1 and DynDns2 protocols
 - Tokens can be restricted to individual DNS zones, DNS records and records types (A/AAAA)
 - Allows updating A (IPv4) and AAAA (IPv6) records
 - The update script shares the same authentication rate-limiting / blocking method from base ISPConfig
@@ -64,4 +65,6 @@ rm -rf /usr/local/ispconfig/interface/web/nic
   - DynDns1 and DynDns2 protocols, for example with [ddclient](https://github.com/ddclient/ddclient)
   - FRITZ!Box (tm) (may support :8080 and other ports in a future update)
   - maybe others
+  - Workaround: if you don't want to change the ISPConfig port for some reason, you can set up a proxy domain
+    [as described in the wiki](https://github.com/mhofer117/ispconfig-ddns-module/wiki/Setup-Proxy-Domain)
 - May not work correctly or require extra steps in a multi-server setup (feedback is welcome)
