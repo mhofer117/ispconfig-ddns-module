@@ -12,7 +12,7 @@ interface DdnsResponseWriter
 
     public function missingInput(DdnsRequest $request): void;
 
-    public function invalidIpAddress(string $ip): void;
+    public function invalidIpAddress(?string $ip): void;
 
     public function dnsNotFound(string $dns): void;
 

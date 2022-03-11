@@ -46,7 +46,7 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function invalidIpAddress($ip): void
+    public function invalidIpAddress(?string $ip): void
     {
         header("HTTP/1.1 400 Bad Request");
         echo "Invalid IP address: $ip\n";

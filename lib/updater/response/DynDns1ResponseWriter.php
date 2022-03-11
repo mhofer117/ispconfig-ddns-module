@@ -50,7 +50,7 @@ class DynDns1ResponseWriter implements DdnsResponseWriter
         $this->dynDns1Error("Missing input data, zone={$request->getZone()}, record={$request->getRecord()}, type={$request->getRecordType()}, data={$request->getData()}");
     }
 
-    public function invalidIpAddress($ip): void
+    public function invalidIpAddress(?string $ip): void
     {
         $this->dynDns1Error("Invalid IP address: $ip\n");
     }

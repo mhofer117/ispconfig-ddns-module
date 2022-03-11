@@ -34,7 +34,7 @@ class DynDns2ResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function invalidIpAddress(string $ip): void
+    public function invalidIpAddress(?string $ip): void
     {
         echo "notip"; // not a documented dyndns2 return value
         exit;
