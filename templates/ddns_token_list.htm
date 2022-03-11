@@ -285,17 +285,13 @@
             modal.find('input#token-url-simple').val('<tmpl_var name="simple_mode_unavailable_txt">');
             modal.find('div#token-url-simple-warning').hide();
         }
-        if (zones.length === 0) {
-            zones.push('example.com.');
-        }
-        if (records.length === 0) {
-            records.push('hostname')
-        }
+        const zone = zones.length === 0 ? 'example.com.' : zones[0];
+        const record = records.length === 0 ? 'hostname' : records[0];
         let example_data = '<tmpl_var name="url_ip_placeholder_txt">';
         if(types.indexOf('A') === -1 && types.indexOf('AAAA') === -1) {
             example_data = 'XY';
         }
-        const url_advanced = base_url + '?zone=' + zones[0] + '&type=' + types[0] + '&record=' + records[0] + '&data=' + example_data + '&token=' + token;
+        const url_advanced = base_url + '?zone=' + zone + '&type=' + types[0] + '&record=' + record + '&data=' + example_data + '&token=' + token;
         // set standard url parameters
         modal.find('input#token-url-advanced').val(url_advanced);
         modal.find('input#token-auth-pass').val(token);
@@ -304,7 +300,7 @@
         } else {
             modal.find('span#zone-optional').hide();
         }
-        if (records.length === 1) {
+        if (records.length <= 1) {
             modal.find('span#record-optional').show();
         } else {
             modal.find('span#record-optional').hide();
@@ -320,7 +316,7 @@
             modal.find('div#dyndns-mode').hide();
         } else {
             modal.find('div#dyndns-mode').show();
-            const hostname = records[0] + '.' + zones[0].slice(0, -1);
+            const hostname = record + '.' + zone.slice(0, -1);
             const url_dyndns = base_url + '/nic/update?hostname=' + hostname + '&myip=' + example_data;
             modal.find('input#dyndns-url').val(url_dyndns);
             modal.find('input#dyndns-server').val(window.location.hostname);
