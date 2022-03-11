@@ -114,6 +114,10 @@
                         </span>
                     </div>
                 </div>
+                <div id="token-url-simple-warning" class="alert alert-warning" role="alert">
+                    <strong><tmpl_var name="token_url_simple_warning_title_txt"></strong>
+                    <tmpl_var name="token_url_simple_warning_txt">
+                </div>
 
                 <hr/>
 
@@ -269,11 +273,17 @@
             }
         }
         let url = base_url + '/ddns/update.php';
-        if (zones.length === 1 && records.length === 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
+        if (zones.length === 1 && records.length <= 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
             const url_simple = url + '?token=' + token;
             modal.find('input#token-url-simple').val(url_simple);
+            if (records.length === 0) {
+                modal.find('div#token-url-simple-warning').show();
+            } else {
+                modal.find('div#token-url-simple-warning').hide();
+            }
         } else {
             modal.find('input#token-url-simple').val('<tmpl_var name="simple_mode_unavailable_txt">');
+            modal.find('div#token-url-simple-warning').hide();
         }
         if (zones.length === 0) {
             zones.push('example.com.');
