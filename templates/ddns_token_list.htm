@@ -257,9 +257,14 @@
         const types = button.data('types').split(',').filter(n => n);
         const records = button.data('records').split(',').filter(n => n);
         const modal = $(this);
+        const proxy_host = '<tmpl_var name="PROXY_HOST">'.trim();
         let base_url = window.location.protocol + '//' + window.location.hostname;
-        if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
-            base_url += ':' + window.location.port;
+        if (proxy_host !== '') {
+            base_url = 'https://' + proxy_host
+        } else {
+            if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
+                base_url += ':' + window.location.port;
+            }
         }
         let url = base_url + '/ddns/update.php';
         if (zones.length === 1 && records.length === 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
