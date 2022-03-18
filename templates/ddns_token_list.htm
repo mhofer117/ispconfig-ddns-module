@@ -272,9 +272,9 @@
                 custom_port = true;
             }
         }
-        let url = base_url + '/ddns/update.php';
+        let script_url = base_url + '/ddns/update.php';
         if (zones.length === 1 && records.length <= 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
-            const url_simple = url + '?token=' + token;
+            const url_simple = script_url + '?token=' + token;
             modal.find('input#token-url-simple').val(url_simple);
             if (records.length === 0) {
                 modal.find('div#token-url-simple-warning').show();
@@ -291,7 +291,7 @@
         if(types.indexOf('A') === -1 && types.indexOf('AAAA') === -1) {
             example_data = 'XY';
         }
-        const url_advanced = base_url + '?zone=' + zone + '&type=' + types[0] + '&record=' + record + '&data=' + example_data + '&token=' + token;
+        const url_advanced = script_url + '?zone=' + zone + '&type=' + types[0] + '&record=' + record + '&data=' + example_data + '&token=' + token;
         // set standard url parameters
         modal.find('input#token-url-advanced').val(url_advanced);
         modal.find('input#token-auth-pass').val(token);
