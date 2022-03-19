@@ -262,11 +262,15 @@
         const records = button.data('records').split(',').filter(n => n);
         const modal = $(this);
         const proxy_host = '<tmpl_var name="PROXY_HOST">'.trim();
-        let base_url = window.location.protocol + '//' + window.location.hostname;
+        let url_hostname;
+        let base_url;
         let custom_port = false;
         if (proxy_host !== '') {
-            base_url = 'https://' + proxy_host
+            url_hostname = proxy_host;
+            base_url = 'https://' + url_hostname;
         } else {
+            url_hostname = window.location.hostname;
+            base_url = window.location.protocol + '//' + url_hostname;
             if (window.location.port !== '80' && window.location.port !== '443' && window.location.port !== '') {
                 base_url += ':' + window.location.port;
                 custom_port = true;
@@ -319,7 +323,7 @@
             const hostname = record + '.' + zone.slice(0, -1);
             const url_dyndns = base_url + '/nic/update?hostname=' + hostname + '&myip=' + example_data;
             modal.find('input#dyndns-url').val(url_dyndns);
-            modal.find('input#dyndns-server').val(window.location.hostname);
+            modal.find('input#dyndns-server').val(url_hostname);
             modal.find('input#dyndns-auth-pass').val(token);
             modal.find('input#dyndns-hostname').val(hostname);
         }
