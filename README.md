@@ -3,6 +3,7 @@
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Installation](#installation)
+- [Update](#update)
 - [Uninstall](#uninstall)
 - [Known/Unknown Issues](#knownunknown-issues)
 
