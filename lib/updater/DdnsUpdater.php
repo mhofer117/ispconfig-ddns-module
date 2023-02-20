@@ -17,7 +17,11 @@ class DdnsUpdater
     public function __construct(app $ispconfig, array $config)
     {
         $this->_ispconfig = $ispconfig;
-        $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        if (isset($_SERVER['HTTP_X_ORIGINAL_REQUEST_URI'])) {
+            $request_uri = parse_url($_SERVER['HTTP_X_ORIGINAL_REQUEST_URI'], PHP_URL_PATH);
+        } else {
+            $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        }
         $this->_remote_ip = $this->getRequestIp($config);
         switch ($request_uri) {
             case '/nic/dyndns':
