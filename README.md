@@ -61,6 +61,8 @@ rm -rf /usr/local/ispconfig/interface/web/nic
 ````
 
 ## Known/Unknown Issues
+- nginx will not respect the .htaccess file used for DynDns, you need to set up a revers proxy domain,
+  [see the guide in the wiki](https://github.com/mhofer117/ispconfig-ddns-module/wiki/Setup-Proxy-Domain-(nginx))
 - Paging does not work correctly, show all records on the same page to work around this
 - The following clients require ISPConfig on a default port (443 or 80):
   - DynDns1 and DynDns2 protocols, for example with [ddclient](https://github.com/ddclient/ddclient)
