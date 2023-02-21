@@ -20,6 +20,10 @@ class DynDnsRequest extends DdnsRequest
         }
         $this->_hostname = rtrim($this->_hostname, '.');
 
+        if ($this->getData() === null) {
+            $this->setData($remote_ip);
+        }
+
         // match hostname with allowed dns zones
         $matching_zones = [];
         foreach ($token->getAllowedZones() as $allowed_zone) {
