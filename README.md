@@ -17,6 +17,7 @@ For general questions or feedback use the [forum thread on howtoforge](https://w
 - Tokens can be restricted to individual DNS zones, DNS records and records types (A/AAAA)
 - Allows updating A (IPv4) and AAAA (IPv6) records
 - The update script shares the same authentication rate-limiting / blocking method from base ISPConfig
+- Works in multi-server setups if the DB-Table is created on all servers, [see discussion](https://github.com/mhofer117/ispconfig-ddns-module/issues/4#issuecomment-1437604492)
 
 ## Screenshots
 ![Overview page screenshot](https://user-images.githubusercontent.com/3976393/141506890-7c235b39-6ad9-4519-a482-4f2e8d44740c.png)
@@ -45,6 +46,8 @@ ln -s -f /usr/local/ispconfig/interface/web/ddns/nic /usr/local/ispconfig/interf
 chown -h ispconfig:ispconfig /usr/local/ispconfig/interface/web/nic
 ````
 
+If you are using nginx, [you will also need to set up a proxy host](https://github.com/mhofer117/ispconfig-ddns-module/wiki/Setup-Proxy-Domain-(nginx))
+
 ## Update
 If you pulled the module to your server with git, use `git pull`, otherwise download the latest release and override all existing files.
 After that, re-run the commands from the installation steps to fix permissions / symlinks.
@@ -60,14 +63,13 @@ rm -rf /usr/local/ispconfig/interface/web/ddns
 rm -rf /usr/local/ispconfig/interface/web/nic
 ````
 
-## Known/Unknown Issues
+## Known Issues
+- Paging does not work correctly, show all records on the same page to work around this
 - nginx will not respect the .htaccess file used for DynDns, you need to set up a revers proxy domain,
   [see the guide in the wiki](https://github.com/mhofer117/ispconfig-ddns-module/wiki/Setup-Proxy-Domain-(nginx))
-- Paging does not work correctly, show all records on the same page to work around this
 - The following clients require ISPConfig on a default port (443 or 80):
   - DynDns1 and DynDns2 protocols, for example with [ddclient](https://github.com/ddclient/ddclient)
   - FRITZ!Box (tm) (may support :8080 and other ports in a future update)
   - maybe others
   - Workaround: if you don't want to change the ISPConfig port for some reason, you can set up a proxy domain
     [as described in the wiki](https://github.com/mhofer117/ispconfig-ddns-module/wiki/Setup-Proxy-Domain)
-- May not work correctly or require extra steps in a multi-server setup (feedback is welcome)
