@@ -62,7 +62,7 @@ class DynDnsRequest extends DdnsRequest
         }
     }
 
-    public function validate(DdnsToken $token, DdnsResponseWriter $response_writer): void
+    public function validate(DdnsToken $token, DdnsResponseWriter $response_writer, app $app): void
     {
         if ($this->_hostname === null) {
             $response_writer->missingInput($this);
@@ -72,9 +72,9 @@ class DynDnsRequest extends DdnsRequest
         if ($this->getZone() === null || $this->getRecord() === null) {
             $response_writer->dnsNotFound($this->_hostname);
             exit;
-        } else if ($this->getRecordType() == null) {
+        } else if ($this->getRecordType() !== 'A' && $this->getRecordType() !== 'AAAA') {
             $response_writer->invalidIpAddress($this->getData());
         }
-        parent::validate($token, $response_writer);
+        parent::validate($token, $response_writer, $app);
     }
 }

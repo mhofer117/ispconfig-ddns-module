@@ -40,6 +40,11 @@ class DynDns2ResponseWriter implements DdnsResponseWriter
         exit;
     }
 
+    public function invalidData(string $reason): void
+    {
+        $this->invalidIpAddress($reason);
+    }
+
     public function dnsNotFound(string $dns): void
     {
         echo "nohost";

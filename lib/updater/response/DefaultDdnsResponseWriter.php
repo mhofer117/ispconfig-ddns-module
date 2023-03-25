@@ -53,6 +53,13 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
         exit;
     }
 
+    public function invalidData(string $reason): void
+    {
+        header("HTTP/1.1 400 Bad Request");
+        echo "Invalid Data: $reason\n";
+        exit;
+    }
+
     public function dnsNotFound(string $dns): void
     {
         header("HTTP/1.1 404 Not Found");

@@ -54,7 +54,7 @@ abstract class DdnsRequest
 
     abstract public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void;
 
-    public function validate(DdnsToken $token, DdnsResponseWriter $response_writer): void
+    public function validate(DdnsToken $token, DdnsResponseWriter $response_writer, app $app): void
     {
         // check if requested zone is allowed (allowed_zones must be set)
         if ($this->getZone() !== null && !in_array($this->getZone(), $token->getAllowedZones(), true)) {

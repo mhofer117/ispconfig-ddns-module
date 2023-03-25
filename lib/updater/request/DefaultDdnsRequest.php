@@ -5,22 +5,26 @@ class DefaultDdnsRequest extends DdnsRequest
 {
     function __construct()
     {
-        $this->setZone($_GET['zone']);
-        $this->setRecord($_GET['record']);
-        $this->setRecordType($_GET['type']);
-        $this->setData($_GET['data']);
+        if (isset($_GET['zone']) || isset($_POST['zone'])) {
+            // make trailing dot optional in request params
+            $zone = rtrim($_GET['zone'] ?? $_POST['zone'], '.') . '.';
+            $this->setZone($zone);
+        }
+        $this->setRecord($_GET['record'] ?? $_POST['record']);
+        $this->setRecordType($_GET['type'] ?? $_POST['type']);
+        $this->setData($_GET['data'] ?? $_POST['data']);
     }
 
     public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
     {
         // auto-set zone if possible
-        if ($this->getZone() === null && count($token->getAllowedZones()) == 1) {
+        if ($this->getZone() === null && count($token->getAllowedZones()) === 1) {
             $this->setZone($token->getAllowedZones()[0]);
         }
         // auto-set record if possible
-        if ($this->getRecord() === null && count($token->getLimitRecords()) == 1) {
+        if ($this->getRecord() === null && count($token->getLimitRecords()) === 1) {
             $this->setRecord($token->getLimitRecords()[0]);
-        } else if ($this->getRecord() === null && count($token->getLimitRecords()) == 0) {
+        } else if ($this->getRecord() === null && count($token->getLimitRecords()) === 0) {
             $this->setRecord('');
         }
 
@@ -34,6 +38,8 @@ class DefaultDdnsRequest extends DdnsRequest
             $this->setRecordType('A');
         } else if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $this->setRecordType('AAAA');
+        } else if ($this->getRecordType() === null && count($token->getAllowedRecordTypes()) === 1) {
+            $this->setRecordType($token->getAllowedRecordTypes()[0]);
         }
     }
 }

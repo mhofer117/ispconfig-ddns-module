@@ -55,6 +55,11 @@ class DynDns1ResponseWriter implements DdnsResponseWriter
         $this->dynDns1Error("Invalid IP address: $ip\n");
     }
 
+    public function invalidData(string $reason): void
+    {
+        $this->invalidIpAddress($reason);
+    }
+
     public function dnsNotFound(string $dns): void
     {
         $this->dynDns1Error("Could not find $dns");

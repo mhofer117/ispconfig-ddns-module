@@ -14,6 +14,8 @@ interface DdnsResponseWriter
 
     public function invalidIpAddress(?string $ip): void;
 
+    public function invalidData(string $reason): void;
+
     public function dnsNotFound(string $dns): void;
 
     public function internalError(string $message): void;
