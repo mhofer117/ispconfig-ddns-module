@@ -103,7 +103,7 @@ $form['tabs']['token'] = array(
                     'errmsg' => 'allowed_record_types_notempty_txt'
                 )
             ),
-            'value' => array('A' => 'A (IPv4)', 'AAAA' => 'AAAA (IPv6)'),
+            'value' => array('A' => 'A (IPv4)', 'AAAA' => 'AAAA (IPv6)', 'TXT' => 'TXT'),
             'name' => 'record_types',
             'maxlength' => '255'
         ),

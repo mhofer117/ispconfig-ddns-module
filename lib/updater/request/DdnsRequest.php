@@ -97,6 +97,22 @@ abstract class DdnsRequest
             }
             // write back filtered ip
             $this->setData($ip);
+        } else if ($this->getRecordType() === 'TXT') {
+            // IDNTOASCII and TOLOWER transformations for record name
+            $record = $app->functions->idn_encode($this->getRecord());
+            $record = strtolower($record);
+            $this->setRecord($record);
+
+            // validation for data
+            if($this->getData() === '') {
+                $response_writer->missingInput($this);
+                exit;
+            } else if (strlen($this->getData()) > 255) {
+                $response_writer->invalidData("maximum 255 characters");
+                exit;
+            }
+        } else {
+            $response_writer->forbidden('record type ' . $this->getRecordType());
         }
     }
 }
