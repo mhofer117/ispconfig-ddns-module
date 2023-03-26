@@ -11,6 +11,8 @@ abstract class DdnsRequest
     protected $_record_type;
     /** @var string $_data */
     protected $_data;
+    /** @var string $_action */
+    protected $_action = 'save'; // 'save' or 'delete'
 
     public function setZone($zone): void
     {
@@ -52,6 +54,16 @@ abstract class DdnsRequest
         return $this->_data;
     }
 
+    public function setAction($action): void
+    {
+        $this->_action = $action;
+    }
+
+    public function getAction(): string
+    {
+        return $this->_action;
+    }
+
     abstract public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void;
 
     public function validate(DdnsToken $token, DdnsResponseWriter $response_writer, app $app): void
@@ -75,7 +87,11 @@ abstract class DdnsRequest
         }
 
         // check if all required data is available
-        if ($this->getZone() === null || $this->getRecord() === null || $this->getRecordType() === null || $this->getData() === null) {
+        if ($this->getZone() === null || $this->getRecord() === null || $this->getRecordType() === null) {
+            $response_writer->missingInput($this);
+            exit;
+        }
+        if ($this->getAction() !== 'delete' && $this->getData() === null) {
             $response_writer->missingInput($this);
             exit;
         }
@@ -103,13 +119,15 @@ abstract class DdnsRequest
             $record = strtolower($record);
             $this->setRecord($record);
 
-            // validation for data
-            if($this->getData() === '') {
-                $response_writer->missingInput($this);
-                exit;
-            } else if (strlen($this->getData()) > 255) {
-                $response_writer->invalidData("maximum 255 characters");
-                exit;
+            if ($this->getAction() !== 'delete') {
+                // validation for data
+                if ($this->getData() === '') {
+                    $response_writer->missingInput($this);
+                    exit;
+                } else if (strlen($this->getData()) > 255) {
+                    $response_writer->invalidData("maximum 255 characters");
+                    exit;
+                }
             }
         } else {
             $response_writer->forbidden('record type ' . $this->getRecordType());

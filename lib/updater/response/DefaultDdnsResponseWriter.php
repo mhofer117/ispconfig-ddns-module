@@ -74,10 +74,10 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function noUpdateRequired(DdnsRequest $request, string $action): void
+    public function noUpdateRequired(DdnsRequest $request): void
     {
         // return normal 200, no http error code
-        if ($action === 'delete') {
+        if ($request->getAction() === 'delete') {
             echo "ERROR: {$request->getRecord()} does not exit.\n";
         } else {
             echo "ERROR: {$request->getData()} is already set in {$request->getRecord()}.\n";
@@ -85,9 +85,9 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function successfulUpdate(DdnsRequest $request, string $action, int $record_ttl, int $cron_eta): void
+    public function successfulUpdate(DdnsRequest $request, int $record_ttl, int $cron_eta): void
     {
-        if ($action === 'delete') {
+        if ($request->getAction() === 'delete') {
             echo "Scheduled delete of record {$request->getRecord()}. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl.\n";
         } else {
             echo "Scheduled update to '{$request->getData()}' of record {$request->getRecord()}. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl.\n";

@@ -135,13 +135,7 @@ class DdnsUpdater
         }
         */
 
-        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            $action = 'delete';
-        } else {
-            $action = 'save';
-        }
         return [
-            'action' => $action,
             'request' => $request,
             'soa' => $soa,
             'rr' => $rr
@@ -155,12 +149,11 @@ class DdnsUpdater
         $longest_ttl = 0;
         // update DNS records
         foreach ($records as $record) {
-            $action = $record['action'];
             $request = $record['request'];
             $soa = $record['soa'];
             $rr = $record['rr'];
             if ($rr !== null) {
-                if ($action === 'delete') {
+                if ($request->getAction() === 'delete') {
                     $this->_ispconfig->db->datalogDelete('dns_rr', 'id', $rr['id']);
                 } else {
                     // check if update is required
@@ -181,7 +174,7 @@ class DdnsUpdater
                     $longest_ttl = (int)$rr['ttl'];
                 }
             } else {
-                if ($action === 'delete') {
+                if ($request->getAction() === 'delete') {
                     // cannot delete non-existing record
                     continue;
                 }
@@ -213,7 +206,7 @@ class DdnsUpdater
         }
 
         if (!$update_performed) {
-            $this->_response_writer->noUpdateRequired($records[0]['request'], $records[0]['action']);
+            $this->_response_writer->noUpdateRequired($records[0]['request']);
             exit;
         }
 
@@ -228,6 +221,6 @@ class DdnsUpdater
             // cron runs every full minute, calculate seconds left
             $cron_eta = 60 - date('s');
         }
-        $this->_response_writer->successfulUpdate($records[0]['request'], $records[0]['action'], $longest_ttl, $cron_eta);
+        $this->_response_writer->successfulUpdate($records[0]['request'], $longest_ttl, $cron_eta);
     }
 }

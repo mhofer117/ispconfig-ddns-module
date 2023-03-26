@@ -13,6 +13,9 @@ class DefaultDdnsRequest extends DdnsRequest
         $this->setRecord($_GET['record'] ?? $_POST['record']);
         $this->setRecordType($_GET['type'] ?? $_POST['type']);
         $this->setData($_GET['data'] ?? $_POST['data']);
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            $this->setAction('delete');
+        }
     }
 
     public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
