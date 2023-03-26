@@ -178,7 +178,7 @@ class DdnsUpdater
             $rr = $record['rr'];
             if ($request->getAction() === 'delete') {
                 // delete record
-                if ($rr !== null) {
+                if ($rr === null) {
                     // cannot delete non-existing record
                     continue;
                 }
@@ -189,7 +189,7 @@ class DdnsUpdater
                 }
             } else if ($request->getAction() === 'update') {
                 // update record
-                if ($rr !== null) {
+                if ($rr === null) {
                     $this->_response_writer->internalError("Record is missing for action update, unable to proceed");
                     exit;
                 }
