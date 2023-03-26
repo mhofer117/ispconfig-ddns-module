@@ -3,41 +3,47 @@ require_once(dirname(__FILE__) . '/DdnsResponseWriter.php');
 
 class DynDns2ResponseWriter implements DdnsResponseWriter
 {
+    private function exit(): void {
+        // current ddclient implementation does not handle chunked encoding, setting content-length fixes this
+        // see: https://github.com/ddclient/ddclient/issues/499#issuecomment-1447465250
+        header('Content-Length: ' . ob_get_length());
+        exit;
+    }
 
     public function invalidOrMissingToken(): void
     {
         echo "badauth";
-        exit;
+        $this->exit();
     }
 
     public function maintenance(): void
     {
         echo "maintenance"; // not a documented dyndns2 return value
-        exit;
+        $this->exit();
     }
 
     public function tooManyLoginAttempts(): void
     {
         echo "abuse";
-        exit;
+        $this->exit();
     }
 
     public function forbidden(string $entity): void
     {
         echo "!yours";
-        exit;
+        $this->exit();
     }
 
     public function missingInput(DdnsRequest $request): void
     {
         echo "notfqdn";
-        exit;
+        $this->exit();
     }
 
     public function invalidIpAddress(?string $ip): void
     {
         echo "notip"; // not a documented dyndns2 return value
-        exit;
+        $this->exit();
     }
 
     public function invalidData(string $reason): void
@@ -48,24 +54,24 @@ class DynDns2ResponseWriter implements DdnsResponseWriter
     public function dnsNotFound(string $dns): void
     {
         echo "nohost";
-        exit;
+        $this->exit();
     }
 
     public function internalError(string $message): void
     {
         echo "dnserr";
-        exit;
+        $this->exit();
     }
 
     public function noUpdateRequired(string $dnsData): void
     {
         echo "nochg";
-        exit;
+        $this->exit();
     }
 
     public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void
     {
         echo "good $data";
-        exit;
+        $this->exit();
     }
 }

@@ -10,19 +10,25 @@ class DynDns1ResponseWriter implements DdnsResponseWriter
     {
         $this->_ispconfig = $ispconfig;
     }
+    private function exit(): void {
+        // current ddclient implementation does not handle chunked encoding, setting content-length fixes this
+        // see: https://github.com/ddclient/ddclient/issues/499#issuecomment-1447465250
+        header('Content-Length: ' . ob_get_length());
+        exit;
+    }
 
     private function dynDns1Error(string $message) {
         echo "<TITLE>$message</TITLE>\n";
         echo "return code: ERROR\n";
         echo "error code: ERROR\n";
-        exit;
+        $this->exit();
     }
 
     private function dynDns1Success(string $message) {
         echo "<TITLE>$message</TITLE>\n";
         echo "return code: NOERROR\n";
         echo "error code: NOERROR\n";
-        exit;
+        $this->exit();
     }
 
     public function invalidOrMissingToken(): void
