@@ -118,15 +118,17 @@ abstract class DdnsRequest
             $record = strtolower($record);
             $this->setRecord($record);
 
-            if ($this->getAction() !== 'delete') {
-                // validation for data
-                if ($this->getData() === '') {
-                    $response_writer->missingInput($this);
-                    exit;
-                } else if (strlen($this->getData()) > 255) {
-                    $response_writer->invalidData("maximum 255 characters");
-                    exit;
-                }
+            // validation for data
+            if ($this->getData() === '') {
+                $response_writer->missingInput($this);
+                exit;
+            } else if (strlen($this->getData()) > 255) {
+                $response_writer->invalidData("maximum 255 characters");
+                exit;
+            }
+
+            if ($this->getAction() === 'update') {
+                $response_writer->forbidden("TXT update");
             }
         } else {
             $response_writer->forbidden('record type ' . $this->getRecordType());
