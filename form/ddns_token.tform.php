@@ -113,7 +113,7 @@ $form['tabs']['token'] = array(
             'validators' => array(
                 0 => array(
                     'type' => 'REGEX',
-                    'regex' => '/^([a-zA-Z0-9\.\-\*],?)*$/',
+                    'regex' => '/^([a-zA-Z0-9\_\.\-\*],?)*$/',
                     'errmsg' => 'limit_records_error_regex_txt'
                 )
             ),

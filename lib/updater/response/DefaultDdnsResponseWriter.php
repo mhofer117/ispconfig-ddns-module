@@ -74,16 +74,24 @@ class DefaultDdnsResponseWriter implements DdnsResponseWriter
         exit;
     }
 
-    public function noUpdateRequired(string $dnsData): void
+    public function noUpdateRequired(DdnsRequest $request, string $action): void
     {
         // return normal 200, no http error code
-        echo "ERROR: $dnsData is already set.\n";
+        if ($action === 'delete') {
+            echo "ERROR: {$request->getRecord()} does not exit.\n";
+        } else {
+            echo "ERROR: {$request->getData()} is already set in {$request->getRecord()}.\n";
+        }
         exit;
     }
 
-    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void
+    public function successfulUpdate(DdnsRequest $request, string $action, int $record_ttl, int $cron_eta): void
     {
-        echo "Scheduled update to $$data. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl.\n";
+        if ($action === 'delete') {
+            echo "Scheduled delete of record {$request->getRecord()}. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl.\n";
+        } else {
+            echo "Scheduled update to '{$request->getData()}' of record {$request->getRecord()}. Schedule runs in $cron_eta seconds. Record TTL: $record_ttl.\n";
+        }
         exit;
     }
 

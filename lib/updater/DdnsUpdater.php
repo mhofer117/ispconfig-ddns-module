@@ -111,7 +111,7 @@ class DdnsUpdater
     protected function loadDnsRecord(DdnsRequest $request): array
     {
         // try to load zone
-        $soa = $this->_ispconfig->db->queryOneRecord("SELECT id,origin,ttl,serial FROM dns_soa WHERE origin=?", $request->getZone());
+        $soa = $this->_ispconfig->db->queryOneRecord("SELECT id,server_id,sys_userid,sys_groupid,origin,ttl,serial FROM dns_soa WHERE origin=?", $request->getZone());
         if ($soa == null || $soa['id'] == null) {
             $this->_response_writer->dnsNotFound("zone '{$request->getZone()}'");
             exit;
@@ -188,6 +188,10 @@ class DdnsUpdater
                 $rr_insert = array(
                     // "id" auto-generated
                     "server_id" => $soa["server_id"],
+                    "sys_userid" => $soa["sys_userid"],
+                    "sys_groupid" => $soa["sys_groupid"],
+                    "sys_perm_user" => 'riud',
+                    "sys_perm_group" => 'riud',
                     "zone" => $soa['id'],
                     "type" => $request->getRecordType(),
                     "ttl" => '3600',
@@ -209,7 +213,7 @@ class DdnsUpdater
         }
 
         if (!$update_performed) {
-            $this->_response_writer->noUpdateRequired($records[0]['request']->getData());
+            $this->_response_writer->noUpdateRequired($records[0]['request'], $records[0]['action']);
             exit;
         }
 
@@ -224,6 +228,6 @@ class DdnsUpdater
             // cron runs every full minute, calculate seconds left
             $cron_eta = 60 - date('s');
         }
-        $this->_response_writer->successfulUpdate($records[0]['request']->getData(), $longest_ttl, $cron_eta);
+        $this->_response_writer->successfulUpdate($records[0]['request'], $records[0]['action'], $longest_ttl, $cron_eta);
     }
 }

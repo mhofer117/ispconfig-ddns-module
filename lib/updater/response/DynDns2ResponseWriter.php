@@ -63,15 +63,15 @@ class DynDns2ResponseWriter implements DdnsResponseWriter
         $this->exit();
     }
 
-    public function noUpdateRequired(string $dnsData): void
+    public function noUpdateRequired(DdnsRequest $request, string $action): void
     {
         echo "nochg";
         $this->exit();
     }
 
-    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void
+    public function successfulUpdate(DdnsRequest $request, string $action, int $record_ttl, int $cron_eta): void
     {
-        echo "good $data";
+        echo "good {$request->getData()}";
         $this->exit();
     }
 }

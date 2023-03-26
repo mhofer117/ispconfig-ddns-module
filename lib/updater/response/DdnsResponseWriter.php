@@ -20,7 +20,7 @@ interface DdnsResponseWriter
 
     public function internalError(string $message): void;
 
-    public function noUpdateRequired(string $dnsData): void;
+    public function noUpdateRequired(DdnsRequest $request, string $action): void;
 
-    public function successfulUpdate(string $data, int $record_ttl, int $cron_eta): void;
+    public function successfulUpdate(DdnsRequest $request, string $action, int $record_ttl, int $cron_eta): void;
 }
