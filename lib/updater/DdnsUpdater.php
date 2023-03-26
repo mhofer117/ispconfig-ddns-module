@@ -154,8 +154,10 @@ class DdnsUpdater
             $rr = $record['rr'];
             if ($rr !== null) {
                 if ($request->getAction() === 'delete') {
+                    // delete record
                     $this->_ispconfig->db->datalogDelete('dns_rr', 'id', $rr['id']);
                 } else {
+                    // update record
                     // check if update is required
                     if ($rr['data'] == $request->getData()) {
                         continue;
@@ -174,9 +176,21 @@ class DdnsUpdater
                     $longest_ttl = (int)$rr['ttl'];
                 }
             } else {
+                // create record
                 if ($request->getAction() === 'delete') {
                     // cannot delete non-existing record
                     continue;
+                }
+                // Get the limits of the client
+                $client_group_id = intval($soa["sys_groupid"]);
+                $client = $this->_ispconfig->db->queryOneRecord("SELECT limit_dns_record FROM sys_group, client WHERE sys_group.client_id = client.client_id and sys_group.groupid = ?", $client_group_id);
+                // Check if the user may add another record.
+                if($client["limit_dns_record"] >= 0) {
+                    $tmp = $this->_ispconfig->db->queryOneRecord("SELECT count(id) as number FROM dns_rr WHERE sys_groupid = ?", $client_group_id);
+                    if($tmp["number"] >= $client["limit_dns_record"]) {
+                        $this->_response_writer->forbidden("new record. dns record limit reached.");
+                        exit;
+                    }
                 }
                 $rr_insert = array(
                     // "id" auto-generated
