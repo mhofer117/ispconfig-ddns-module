@@ -28,18 +28,21 @@ class DefaultDdnsRequest extends DdnsRequest
             $this->setRecord('');
         }
 
+        // auto-set type if possible
+        if ($this->getRecordType() === null && count($token->getAllowedRecordTypes()) === 1) {
+            $this->setRecordType($token->getAllowedRecordTypes()[0]);
+        }
+
         // auto-set data if possible
         if ($this->getData() === null && ($this->getRecordType() === null || $this->getRecordType() === 'A' || $this->getRecordType() === 'AAAA')) {
             $this->setData($remote_ip);
         }
 
-        // auto-set type if possible
+        // auto-set type if possible (in case data is now set)
         if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $this->setRecordType('A');
         } else if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $this->setRecordType('AAAA');
-        } else if ($this->getRecordType() === null && count($token->getAllowedRecordTypes()) === 1) {
-            $this->setRecordType($token->getAllowedRecordTypes()[0]);
         }
     }
 }
