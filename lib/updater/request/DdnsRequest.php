@@ -12,7 +12,7 @@ abstract class DdnsRequest
     /** @var string $_data */
     protected $_data;
     /** @var string $_action */
-    protected $_action = 'save'; // 'save' or 'delete'
+    protected $_action; // 'add', 'update' or 'delete'
 
     public function setZone($zone): void
     {
@@ -56,10 +56,13 @@ abstract class DdnsRequest
 
     public function setAction($action): void
     {
-        $this->_action = $action;
+        // ignore invalid actions...
+        if (in_array($action, array('add', 'delete', 'update'), true)) {
+            $this->_action = $action;
+        }
     }
 
-    public function getAction(): string
+    public function getAction(): ?string
     {
         return $this->_action;
     }
@@ -87,11 +90,7 @@ abstract class DdnsRequest
         }
 
         // check if all required data is available
-        if ($this->getZone() === null || $this->getRecord() === null || $this->getRecordType() === null) {
-            $response_writer->missingInput($this);
-            exit;
-        }
-        if ($this->getAction() !== 'delete' && $this->getData() === null) {
+        if ($this->getZone() === null || $this->getRecord() === null || $this->getRecordType() === null || $this->getData() === null) {
             $response_writer->missingInput($this);
             exit;
         }

@@ -10,6 +10,8 @@ class DynDnsRequest extends DdnsRequest
     {
         $this->_hostname = $hostname;
         $this->setData($_GET['myip']);
+        // action is always update (for DynDNS requests)
+        $this->setAction('update');
         // zone, record and type cannot be determined from http request only
     }
 

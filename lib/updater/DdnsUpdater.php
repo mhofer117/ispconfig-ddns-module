@@ -46,7 +46,7 @@ class DdnsUpdater
                     $this->_response_writer->missingInput(new DynDnsRequest(null));
                     exit;
                 }
-                foreach ($hostnames as &$hostname) {
+                foreach ($hostnames as $hostname) {
                     $this->_requests[] = new DynDnsRequest($hostname);
                 }
                 break;
@@ -111,29 +111,53 @@ class DdnsUpdater
     protected function loadDnsRecord(DdnsRequest $request): array
     {
         // try to load zone
-        $soa = $this->_ispconfig->db->queryOneRecord("SELECT id,server_id,sys_userid,sys_groupid,origin,ttl,serial FROM dns_soa WHERE origin=?", $request->getZone());
+        $soa = $this->_ispconfig->db->queryOneRecord(
+            "SELECT id,server_id,sys_userid,sys_groupid,origin,ttl,serial FROM dns_soa WHERE origin=?",
+            $request->getZone()
+        );
         if ($soa == null || $soa['id'] == null) {
             $this->_response_writer->dnsNotFound("zone '{$request->getZone()}'");
             exit;
         }
 
-        // try to load record
+        // try to load record (for update/delete)
         $rr = null;
-        $rrResult = $this->_ispconfig->db->query("SELECT id,data,ttl,serial FROM dns_rr WHERE type=? AND name=? AND zone=?", $request->getRecordType(), $request->getRecord(), $soa['id']);
-        if ($rrResult && $rrResult->rows() > 0) {
-            if ($rrResult->rows() > 1) {
-                $this->_response_writer->internalError("Found more than one record to update, unable to proceed");
+        if ($request->getAction() !== 'add') {
+            $rrResult = $this->_ispconfig->db->query(
+                "SELECT id,data,ttl,serial FROM dns_rr WHERE type=? AND name=? AND zone=?",
+                $request->getRecordType(),
+                $request->getRecord(),
+                $soa['id']
+            );
+            if ($rrResult && $rrResult->rows() > 0) {
+                if ($request->getAction() === 'update') {
+                    // update requests are only possible with DDNS because we do not work with IDs or 'oldData' (yet)
+                    // there should not be more than one A / AAAA entry for this...
+                    if ($rrResult->rows() > 1) {
+                        $rrResult->free();
+                        $this->_response_writer->internalError("Found more than one record to update, unable to proceed");
+                        exit;
+                    }
+                    $rr = $rrResult->get();
+                    $rrResult->free();
+                } else {
+                    // for delete, check matching record by data
+                    while($record = $rrResult->get()) {
+                        if ($record['data'] === $request->getData()) {
+                            $rr = $record;
+                            break;
+                        }
+                    }
+                    $rrResult->free();
+                }
+            }
+            if ($rr === null) {
+                $this->_response_writer->dnsNotFound(
+                    "record '{$request->getRecord()}' of type '{$request->getRecordType()}' in zone '{$request->getZone()}'"
+                );
                 exit;
             }
-            $rr = $rrResult->get();
-            $rrResult->free();
         }
-        /* disabled: allow creating new records
-        if ($rr == null) {
-            $this->_response_writer->dnsNotFound("record '{$request->getRecord()}' of type '{$request->getRecordType()}' in zone '{$request->getZone()}'");
-            exit;
-        }
-        */
 
         return [
             'request' => $request,
@@ -152,41 +176,52 @@ class DdnsUpdater
             $request = $record['request'];
             $soa = $record['soa'];
             $rr = $record['rr'];
-            if ($rr !== null) {
-                if ($request->getAction() === 'delete') {
-                    // delete record
-                    $this->_ispconfig->db->datalogDelete('dns_rr', 'id', $rr['id']);
-                } else {
-                    // update record
-                    // check if update is required
-                    if ($rr['data'] == $request->getData()) {
-                        continue;
-                    }
-
-                    // Update the RR record
-                    $rr_update = array(
-                        "data" => $request->getData(),
-                        "serial" => $this->_ispconfig->validate_dns->increase_serial($rr["serial"]),
-                        "stamp" => date('Y-m-d H:i:s')
-                    );
-                    $this->_ispconfig->db->datalogUpdate('dns_rr', $rr_update, 'id', $rr['id']);
+            if ($request->getAction() === 'delete') {
+                // delete record
+                if ($rr !== null) {
+                    // cannot delete non-existing record
+                    continue;
                 }
+                $this->_ispconfig->db->datalogDelete('dns_rr', 'id', $rr['id']);
                 $update_performed = true;
                 if ($longest_ttl < (int)$rr['ttl']) {
                     $longest_ttl = (int)$rr['ttl'];
                 }
-            } else {
-                // create record
-                if ($request->getAction() === 'delete') {
-                    // cannot delete non-existing record
+            } else if ($request->getAction() === 'update') {
+                // update record
+                if ($rr !== null) {
+                    $this->_response_writer->internalError("Record is missing for action update, unable to proceed");
+                    exit;
+                }
+                // check if update is required
+                if ($rr['data'] == $request->getData()) {
                     continue;
                 }
+                // Update the RR
+                $rr_update = array(
+                    "data" => $request->getData(),
+                    "serial" => $this->_ispconfig->validate_dns->increase_serial($rr["serial"]),
+                    "stamp" => date('Y-m-d H:i:s')
+                );
+                $this->_ispconfig->db->datalogUpdate('dns_rr', $rr_update, 'id', $rr['id']);
+                $update_performed = true;
+                if ($longest_ttl < (int)$rr['ttl']) {
+                    $longest_ttl = (int)$rr['ttl'];
+                }
+            } else if ($request->getAction() === 'add') {
+                // create record
                 // Get the limits of the client
                 $client_group_id = intval($soa["sys_groupid"]);
-                $client = $this->_ispconfig->db->queryOneRecord("SELECT limit_dns_record FROM sys_group, client WHERE sys_group.client_id = client.client_id and sys_group.groupid = ?", $client_group_id);
+                $client = $this->_ispconfig->db->queryOneRecord(
+                    "SELECT limit_dns_record FROM sys_group, client WHERE sys_group.client_id = client.client_id and sys_group.groupid = ?",
+                    $client_group_id
+                );
                 // Check if the user may add another record.
                 if($client["limit_dns_record"] >= 0) {
-                    $tmp = $this->_ispconfig->db->queryOneRecord("SELECT count(id) as number FROM dns_rr WHERE sys_groupid = ?", $client_group_id);
+                    $tmp = $this->_ispconfig->db->queryOneRecord(
+                        "SELECT count(id) as number FROM dns_rr WHERE sys_groupid = ?",
+                        $client_group_id
+                    );
                     if($tmp["number"] >= $client["limit_dns_record"]) {
                         $this->_response_writer->forbidden("new record. dns record limit reached.");
                         exit;
@@ -208,6 +243,7 @@ class DdnsUpdater
                     "active" => 'Y',
                     "stamp" => date('Y-m-d H:i:s')
                 );
+                // insert the RR
                 $this->_ispconfig->db->datalogInsert('dns_rr', $rr_insert, 'id');
                 $update_performed = true;
                 if ($longest_ttl < (int)$soa['ttl']) {

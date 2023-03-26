@@ -13,9 +13,7 @@ class DefaultDdnsRequest extends DdnsRequest
         $this->setRecord($_GET['record'] ?? $_POST['record']);
         $this->setRecordType($_GET['type'] ?? $_POST['type']);
         $this->setData($_GET['data'] ?? $_POST['data']);
-        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            $this->setAction('delete');
-        }
+        $this->setAction($_GET['action'] ?? $_POST['action']);
     }
 
     public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
@@ -39,13 +37,27 @@ class DefaultDdnsRequest extends DdnsRequest
         // auto-set data if possible
         if ($this->getData() === null && ($this->getRecordType() === null || $this->getRecordType() === 'A' || $this->getRecordType() === 'AAAA')) {
             $this->setData($remote_ip);
+            // auto-set type based on IP
+            if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $this->setRecordType('A');
+            } else if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                $this->setRecordType('AAAA');
+            }
         }
 
-        // auto-set type if possible (in case data is now set)
-        if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $this->setRecordType('A');
-        } else if ($this->getRecordType() === null && $this->getData() !== null && filter_var($this->getData(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            $this->setRecordType('AAAA');
+        // auto-set action if provided
+        if ($this->getAction() === null) {
+            switch ($_SERVER['REQUEST_METHOD']) {
+                case 'DELETE':
+                    $this->setAction('delete');
+                    break;
+                case 'POST':
+                    $this->setAction('add');
+                    break;
+                default:
+                    // GET, PUT, PATCH, ...
+                    $this->setAction('update');
+            }
         }
     }
 }
