@@ -209,7 +209,7 @@ class DdnsUpdater
         }
 
         if (!$update_performed) {
-            $this->_response_writer->noUpdateRequired($records[0]['requestData']);
+            $this->_response_writer->noUpdateRequired($records[0]['request']->getData());
             exit;
         }
 
@@ -224,6 +224,6 @@ class DdnsUpdater
             // cron runs every full minute, calculate seconds left
             $cron_eta = 60 - date('s');
         }
-        $this->_response_writer->successfulUpdate($records[0]['requestData'], $longest_ttl, $cron_eta);
+        $this->_response_writer->successfulUpdate($records[0]['request']->getData(), $longest_ttl, $cron_eta);
     }
 }
