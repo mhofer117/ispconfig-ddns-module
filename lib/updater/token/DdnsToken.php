@@ -46,10 +46,37 @@ class DdnsToken
             // User login right, so attempts can be deleted
             $sql = "DELETE FROM `attempts_login` WHERE `ip`=?";
             $this->_ispconfig->db->query($sql, $request_ip);
+            // create fake user session for token owner
+            $group_id = intval($token['sys_groupid']);
+            $user_id = intval($token['sys_userid']);
+            if ($group_id !== 0) {
+                // groupid is changeable in UI (by admins), try it first
+                $sql = "SELECT * FROM sys_group WHERE groupid = ?";
+                $group = $this->_ispconfig->db->queryOneRecord($sql, $group_id);
+                $client_id = intval($group['client_id']);
+                $sql = "SELECT * FROM sys_user WHERE client_id = ?";
+                $user = $this->_ispconfig->db->queryOneRecord($sql, $client_id);
+                $this->create_user_session($user);
+            } else if ($user_id !== 0) {
+                $sql = "SELECT * FROM sys_user WHERE userid = ?";
+                $user = $this->_ispconfig->db->queryOneRecord($sql, $user_id);
+                $this->create_user_session($user);
+            }
         }
         $this->_allowed_zones = array_filter(explode(',', $token['allowed_zones']));
         $this->_allowed_record_types = array_filter(explode(',', $token['allowed_record_types']));
         $this->_limit_records = array_filter(explode(',', $token['limit_records']));
+    }
+
+    private function create_user_session(array $user)
+    {
+        $user = $this->_ispconfig->db->toLower($user);
+        // session_start() should never be called,
+        // but make sure no session cookie is created anyway to prevent possible account takeover
+        ini_set('session.use_cookies', '0');
+        $_SESSION = array();
+        $_SESSION['s']['user'] = $user;
+        $_SESSION['s']['language'] = $this->_ispconfig->functions->check_language($user['language']);
     }
 
     public function getAllowedZones(): array
