@@ -122,41 +122,41 @@ class DdnsUpdater
 
         // try to load record (for update/delete)
         $rr = null;
-        if ($request->getAction() !== 'add') {
-            $rrResult = $this->_ispconfig->db->query(
-                "SELECT id,data,ttl,serial FROM dns_rr WHERE type=? AND name=? AND zone=?",
-                $request->getRecordType(),
-                $request->getRecord(),
-                $soa['id']
-            );
-            if ($rrResult && $rrResult->rows() > 0) {
-                if ($request->getAction() === 'update') {
-                    // update requests are only possible with DDNS because we do not work with IDs or 'oldData' (yet)
-                    // there should not be more than one A / AAAA entry for this...
-                    if ($rrResult->rows() > 1) {
-                        $rrResult->free();
-                        $this->_response_writer->internalError("Found more than one record to update, unable to proceed");
-                        exit;
-                    }
-                    $rr = $rrResult->get();
+        $rrResult = $this->_ispconfig->db->query(
+            "SELECT id,data,ttl,serial FROM dns_rr WHERE type=? AND name=? AND zone=?",
+            $request->getRecordType(),
+            $request->getRecord(),
+            $soa['id']
+        );
+        if ($rrResult && $rrResult->rows() > 0) {
+            if ($request->getAction() === 'update') {
+                // because we do not work with IDs or 'oldData' (yet), there must be exactly one existing record for update operations
+                if ($rrResult->rows() > 1) {
                     $rrResult->free();
-                } else {
-                    // for delete, check matching record by data
-                    while($record = $rrResult->get()) {
-                        if ($record['data'] === $request->getData()) {
-                            $rr = $record;
-                            break;
-                        }
+                    $this->_response_writer->internalError("Found more than one record to update, unable to proceed");
+                    exit;
+                }
+                $rr = $rrResult->get();
+            } else if ($request->getData() !== null) {
+                // for add / delete, check matching record by data
+                while($record = $rrResult->get()) {
+                    if ($record['data'] === $request->getData()) {
+                        $rr = $record;
+                        break;
                     }
-                    $rrResult->free();
                 }
             }
-            if ($rr === null) {
-                $this->_response_writer->dnsNotFound(
-                    "record '{$request->getRecord()}' of type '{$request->getRecordType()}' in zone '{$request->getZone()}'"
-                );
-                exit;
-            }
+            $rrResult->free();
+        }
+        if ($request->getAction() !== 'add' && $rr === null) {
+            $this->_response_writer->dnsNotFound(
+                "record '{$request->getRecord()}' of type '{$request->getRecordType()}' in zone '{$request->getZone()}'"
+            );
+            exit;
+        }
+        if ($request->getAction() === 'add' && $rr !== null) {
+            $this->_response_writer->noUpdateRequired($request);
+            exit;
         }
 
         return [
@@ -194,7 +194,7 @@ class DdnsUpdater
                     exit;
                 }
                 // check if update is required
-                if ($rr['data'] == $request->getData()) {
+                if ($rr['data'] === $request->getData()) {
                     continue;
                 }
                 // Update the RR
@@ -209,6 +209,10 @@ class DdnsUpdater
                     $longest_ttl = (int)$rr['ttl'];
                 }
             } else if ($request->getAction() === 'add') {
+                // check record with same data was already found
+                if ($rr !== null && $rr['data'] === $request->getData()) {
+                    continue;
+                }
                 // create record
                 // Get the limits of the client
                 $client_group_id = intval($soa["sys_groupid"]);
