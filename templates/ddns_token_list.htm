@@ -163,6 +163,8 @@
                 </div>
                 <strong><tmpl_var name="url_parameter_description_txt">:</strong>
                 <dl class="dl-horizontal">
+                    <dt id="action-key">action</dt>
+                    <dd id="action-text"><tmpl_var name="url_parameter_action_txt"></dd>
                     <dt>zone</dt>
                     <dd><span id="zone-optional"><tmpl_var name="optional_txt"> </span><tmpl_var name="url_parameter_zone_txt"></dd>
                     <dt>record</dt>
@@ -277,7 +279,7 @@
             }
         }
         let script_url = base_url + '/ddns/update.php';
-        if (zones.length === 1 && records.length <= 1 && (types.indexOf('A') !== -1 || types.indexOf('AAAA') !== -1)) {
+        if (zones.length === 1 && records.length <= 1 && types.indexOf('TXT') !== -1) {
             const url_simple = script_url + '?token=' + token;
             modal.find('input#token-url-simple').val(url_simple);
             if (records.length === 0) {
@@ -292,10 +294,17 @@
         const zone = zones.length === 0 ? 'example.com.' : zones[0];
         const record = records.length === 0 ? 'hostname' : records[0];
         let example_data = '<tmpl_var name="url_ip_placeholder_txt">';
-        if(types.indexOf('A') === -1 && types.indexOf('AAAA') === -1) {
+        let url_action_param = '';
+        if (types.indexOf('TXT') !== -1) {
+            url_action_param = 'action=add&';
             example_data = 'XY';
+            modal.find('#action-key').show();
+            modal.find('#action-text').show();
+        } else {
+            modal.find('#action-key').hide();
+            modal.find('#action-text').hide();
         }
-        const url_advanced = script_url + '?zone=' + zone + '&type=' + types[0] + '&record=' + record + '&data=' + example_data + '&token=' + token;
+        const url_advanced = script_url + '?' + url_action_param + 'zone=' + zone + '&type=' + types[0] + '&record=' + record + '&data=' + example_data + '&token=' + token;
         // set standard url parameters
         modal.find('input#token-url-advanced').val(url_advanced);
         modal.find('input#token-auth-pass').val(token);
@@ -317,6 +326,9 @@
         // set dyndns parameters
         if (custom_port) {
             // hide dyndns mode on non-default ports
+            modal.find('div#dyndns-mode').hide();
+        } else if (types.indexOf('A') === -1 && types.indexOf('AAAA') === -1) {
+            // hide dyndns mode for non A/AAAA tokens
             modal.find('div#dyndns-mode').hide();
         } else {
             modal.find('div#dyndns-mode').show();
