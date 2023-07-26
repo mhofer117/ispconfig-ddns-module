@@ -85,7 +85,10 @@ class page_action extends tform_actions {
     }
 
     function onSubmit() {
-        global $app;
+        global $app, $conf;
+
+        # statically limit the record to this server only (issue #11)
+        $this->dataRecord['server_id'] = $conf['server_id'];
 
         if($_SESSION['s']['user']['typ'] != 'admin' && !$app->auth->has_clients($_SESSION['s']['user']['userid'])) unset($this->dataRecord["client_group_id"]);
 

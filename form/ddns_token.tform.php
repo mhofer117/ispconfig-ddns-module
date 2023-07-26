@@ -54,9 +54,15 @@ $form['tabs']['token'] = array(
     'width' => 150,       // Tab width
     'template' => 'templates/ddns_token_edit.htm', // Template file name
     'fields' => array(
-
         //*** BEGIN Datatable columns **********************************
-
+        'server_id' => array (
+            'datatype' => 'INTEGER',
+            'formtype' => 'SELECT',
+            'default' => '',
+            'value'  => '',
+            'width'  => '30',
+            'maxlength' => '255'
+        ),
         'token' => array(
             'datatype' => 'VARCHAR',
             'formtype' => 'TEXT',
