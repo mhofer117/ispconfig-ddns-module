@@ -279,7 +279,7 @@
             }
         }
         let script_url = base_url + '/ddns/update.php';
-        if (zones.length === 1 && records.length <= 1 && types.indexOf('TXT') !== -1) {
+        if (zones.length === 1 && records.length <= 1 && types.indexOf('TXT') === -1) {
             const url_simple = script_url + '?token=' + token;
             modal.find('input#token-url-simple').val(url_simple);
             if (records.length === 0) {
