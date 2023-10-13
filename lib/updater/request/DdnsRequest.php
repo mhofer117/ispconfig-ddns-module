@@ -69,6 +69,42 @@ abstract class DdnsRequest
 
     abstract public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void;
 
+    // match zone and record from a hostname
+    protected function match_from_hostname(string $hostname, DdnsToken $token): void
+    {
+        $hostname = rtrim($hostname, '.');
+
+        // match hostname with allowed dns zones
+        $matching_zones = [];
+        foreach ($token->getAllowedZones() as $allowed_zone) {
+            if(strpos($hostname, rtrim($allowed_zone, '.')) !== false) {
+                $matching_zones[] = $allowed_zone;
+            }
+        }
+        if (empty($matching_zones)) {
+            return;
+        } else if (sizeof($matching_zones) === 1) {
+            $this->setZone($matching_zones[0]);
+        } else {
+            $closest_match = '';
+            foreach ($matching_zones as $matching_zone) {
+                if(sizeof($matching_zone) > sizeof($closest_match)) {
+                    $closest_match = $matching_zone;
+                }
+            }
+            $this->setZone($closest_match);
+        }
+
+        // match records with allowed records
+        $zone_length = strlen(rtrim($this->getZone(), '.'));
+        if ($zone_length < strlen($hostname)) {
+            $record = substr($hostname, 0, - $zone_length - 1);
+            $this->setRecord($record);
+        } else if (count($token->getLimitRecords()) == 0) {
+            $this->setRecord('');
+        }
+    }
+
     public function validate(DdnsToken $token, DdnsResponseWriter $response_writer, app $app): void
     {
         // check if requested zone is allowed (allowed_zones must be set)

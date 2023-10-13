@@ -17,43 +17,12 @@ class DynDnsRequest extends DdnsRequest
 
     public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
     {
-        if ($this->_hostname === null) {
-            return;
+        if ($this->_hostname !== null) {
+            parent::match_from_hostname($this->_hostname, $token);
         }
-        $this->_hostname = rtrim($this->_hostname, '.');
 
         if ($this->getData() === null) {
             $this->setData($remote_ip);
-        }
-
-        // match hostname with allowed dns zones
-        $matching_zones = [];
-        foreach ($token->getAllowedZones() as $allowed_zone) {
-            if(strpos($this->_hostname, rtrim($allowed_zone, '.')) !== false) {
-                $matching_zones[] = $allowed_zone;
-            }
-        }
-        if (empty($matching_zones)) {
-            return;
-        } else if (sizeof($matching_zones) === 1) {
-            $this->setZone($matching_zones[0]);
-        } else {
-            $closest_match = '';
-            foreach ($matching_zones as $matching_zone) {
-                if(sizeof($matching_zone) > sizeof($closest_match)) {
-                    $closest_match = $matching_zone;
-                }
-            }
-            $this->setZone($closest_match);
-        }
-
-        // match records with allowed records
-        $zone_length = strlen(rtrim($this->getZone(), '.'));
-        if ($zone_length < strlen($this->_hostname)) {
-            $record = substr($this->_hostname, 0, - $zone_length - 1);
-            $this->setRecord($record);
-        } else if (count($token->getLimitRecords()) == 0) {
-            $this->setRecord('');
         }
 
         // auto-set type

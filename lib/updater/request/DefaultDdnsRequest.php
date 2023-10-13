@@ -18,6 +18,11 @@ class DefaultDdnsRequest extends DdnsRequest
 
     public function autoSetMissingInput(DdnsToken $token, string $remote_ip): void
     {
+        // auto-set zone based on record if possible
+        if ($this->getZone() === null && $this->getRecord() !== null && $this->getRecord() !== '') {
+            parent::match_from_hostname($this->getRecord(), $token);
+        }
+
         // auto-set zone if possible
         if ($this->getZone() === null && count($token->getAllowedZones()) === 1) {
             $this->setZone($token->getAllowedZones()[0]);
