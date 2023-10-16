@@ -16,6 +16,7 @@ For general questions or feedback use the [forum thread on howtoforge](https://w
 - Updates can be performed using DynDns1 and DynDns2 protocols
 - Tokens can be restricted to individual DNS zones, DNS records and records types (A/AAAA)
 - Allows updating A (IPv4) and AAAA (IPv6) records
+- Allows creating/deleting TXT records. Useful for ACME dns-01 challenges using the custom [certbot-dns-ispconfig-ddns plugin](https://github.com/mhofer117/certbot-dns-ispconfig-ddns)
 - The update script shares the same authentication rate-limiting / blocking method from base ISPConfig
 - Works in multi-server setups if the DB-Table is created on all servers, [see discussion](https://github.com/mhofer117/ispconfig-ddns-module/issues/4#issuecomment-1437604492)
 
