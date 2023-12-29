@@ -1,0 +1,3 @@
+# workaround for PHP in CGI mode to pass Authorization header (ddns token) to the PHP scripts
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
